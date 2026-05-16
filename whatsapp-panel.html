@@ -104,67 +104,24 @@
     text-transform: uppercase;
   }
 
-  /* Status da conexão Baileys */
-  .connection-bar {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 18px;
-    margin-bottom: 20px;
-    font-family: var(--mono);
-    font-size: 11px;
-    animation: fadeUp 0.5s ease both;
+  /* Indicador de status no header */
+  .header-status {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px;
   }
 
   .conn-dot {
     width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
+    border-radius: 50%; flex-shrink: 0;
     transition: background 0.3s, box-shadow 0.3s;
   }
 
-  .conn-dot.connected    { background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s ease-in-out infinite; }
-  .conn-dot.disconnected { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+  .conn-dot.connected    { background: var(--green);  box-shadow: 0 0 6px var(--green);  animation: pulse 2s ease-in-out infinite; }
+  .conn-dot.disconnected { background: var(--red);    box-shadow: 0 0 6px var(--red); }
   .conn-dot.connecting   { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); animation: pulse 0.8s ease-in-out infinite; }
 
-  .conn-label { color: var(--muted); }
-  .conn-status { color: var(--text); font-weight: 700; }
-
-  .conn-url-wrap {
-    margin-left: auto;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .conn-url-input {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 5px 10px;
-    width: 200px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .conn-url-input:focus { border-color: var(--green-dim); color: var(--text); }
-
-  .btn-connect {
-    padding: 5px 12px;
-    border-radius: 6px;
-    border: 1px solid var(--green-dim);
-    background: transparent;
-    color: var(--green);
-    font-family: var(--mono);
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-
-  .btn-connect:hover { background: var(--green-glow); }
+  .conn-status { color: var(--muted); font-weight: 700; font-size: 11px; }
 
   /* Input section */
   .input-section {
@@ -428,7 +385,6 @@
     .stat-pill { min-width: calc(50% - 6px); }
     .controls { flex-direction: column; }
     .btn { width: 100%; justify-content: center; }
-    .conn-url-wrap { display: none; }
   }
 </style>
 </head>
@@ -445,18 +401,12 @@
       <h1>Px7 <span>Priv Check</span></h1>
       <p>Painel de Consulta · Backend Baileys</p>
     </div>
+    <div class="header-status">
+      <div class="conn-dot disconnected" id="connDot"></div>
+      <span class="conn-status" id="connStatus">Aguardando…</span>
+    </div>
   </header>
 
-  <!-- Barra de conexão com o backend -->
-  <div class="connection-bar">
-    <div class="conn-dot disconnected" id="connDot"></div>
-    <span class="conn-label">Backend:</span>
-    <span class="conn-status" id="connStatus">Desconectado</span>
-    <div class="conn-url-wrap">
-      <input class="conn-url-input" id="backendUrl" type="text" placeholder="https://seu-app.onrender.com" />
-      <button class="btn-connect" onclick="testConnection()">Testar conexão</button>
-    </div>
-  </div>
 
   <!-- Input -->
   <div class="input-section">
@@ -566,12 +516,9 @@
   let currentFilter = 'all';
   let backendOnline = false;
 
-  // Detecta automaticamente a URL do backend (funciona local e no Render)
-  document.getElementById('backendUrl').value = window.location.origin;
-
   // ─── Utilitários de UI ────────────────────────────────────────────────
   function getBaseUrl() {
-    return document.getElementById('backendUrl').value.replace(/\/$/, '');
+    return window.location.origin;
   }
 
   function setConnStatus(state) {
@@ -592,26 +539,43 @@
     setTimeout(() => el.classList.remove('visible'), 8000);
   }
 
-  // ─── Testar conexão ───────────────────────────────────────────────────
+  // ─── Testar conexão (com retry automático) ───────────────────────────
+  let _retryTimer = null;
+
   async function testConnection() {
+    if (_retryTimer) { clearTimeout(_retryTimer); _retryTimer = null; }
     setConnStatus('connecting');
-    document.getElementById('disclaimerUrl').textContent = getBaseUrl();
+
     try {
-      const r = await fetch(getBaseUrl() + '/status', { signal: AbortSignal.timeout(5000) });
+      const ctrl = new AbortController();
+      const tid  = setTimeout(() => ctrl.abort(), 12000);
+      const r    = await fetch(getBaseUrl() + '/status', { signal: ctrl.signal });
+      clearTimeout(tid);
+
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const data = await r.json();
-      // Espera { status: 'connected' | 'qr_pending' | ... }
+
       if (data.status === 'connected') {
         setConnStatus('connected');
+        _retryTimer = setTimeout(testConnection, 30000);
       } else {
         setConnStatus('disconnected');
-        showError('Backend respondeu, mas o WhatsApp ainda não está autenticado. Acesse ' + getBaseUrl() + '/qr para escanear o QR Code.');
+        const qrUrl = getBaseUrl() + '/qr';
+        const el = document.getElementById('errorBanner');
+        el.innerHTML = '⚠ WhatsApp não autenticado. <a href="' + qrUrl + '" target="_blank" style="color:var(--green);text-decoration:underline">Clique aqui para escanear o QR Code</a>';
+        el.classList.add('visible');
+        _retryTimer = setTimeout(testConnection, 8000);
       }
     } catch (e) {
       setConnStatus('disconnected');
-      showError('Não foi possível conectar ao backend (' + e.message + '). Verifique se o servidor está rodando.');
+      const msg = e.name === 'AbortError' ? 'Timeout (>12s) — aguarde o cold start do Render' : e.message;
+      showError('Não foi possível conectar ao backend (' + msg + '). Tente novamente em alguns segundos.');
+      _retryTimer = setTimeout(testConnection, 15000);
     }
   }
+
+  // Conecta automaticamente ao carregar
+  window.addEventListener('DOMContentLoaded', () => testConnection());
 
   // ─── Verificação real via Baileys ─────────────────────────────────────
   /**
