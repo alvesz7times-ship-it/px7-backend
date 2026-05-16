@@ -1,5 +1,5 @@
 /**
- * WA Checker — Backend Baileys
+ * Px7 Priv Check Numbers — Backend Baileys
  * ─────────────────────────────────────────────────────────────────────────────
  * Instalação:
  *   npm install @whiskeysockets/baileys @hapi/boom qrcode-terminal express cors
@@ -43,7 +43,7 @@ async function startBaileys() {
   sock = makeWASocket({
     auth: state,
     printQRInTerminal: false,   // gerenciamos nós mesmos
-    browser: ['WA Checker', 'Chrome', '1.0.0'],
+    browser: ['Px7 Priv Check Numbers', 'Chrome', '1.0.0'],
     // Desliga logs verbosos; remova se quiser debugar
     logger: require('pino')({ level: 'silent' }),
   });
@@ -137,12 +137,13 @@ async function checkNumber(rawNumber) {
 
 // ─── Express ──────────────────────────────────────────────────────────────────
 const app = express();
-app.use(cors());
+app.use(cors({ origin: '*', methods: ['GET','POST','OPTIONS'], allowedHeaders: ['Content-Type'] }));
+app.options('*', cors());
 app.use(express.json());
 
-// Serve o HTML do painel (opcional — pode abrir direto no browser também)
+// Health check
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'whatsapp-panel.html'));
+  res.json({ ok: true, service: 'Px7 Priv Check', state: connectionState });
 });
 
 // Status da conexão Baileys
