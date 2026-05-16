@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Px7 Priv Check Numbers — Painel de Consulta</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e0d;
+    --surface: #111715;
+    --surface2: #172019;
+    --border: #1e2e24;
+    --green: #25d366;
+    --green-dim: #1a9448;
+    --green-glow: rgba(37,211,102,0.18);
+    --red: #ff4d4d;
+    --red-dim: #8b1a1a;
+    --yellow: #f5c518;
+    --text: #e8f0ec;
+    --muted: #5a7a67;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::after {
+    content: '秘';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(320px, 50vw, 600px);
+    color: rgba(255,255,255,0.12);
+    font-family: 'Noto Serif JP', serif;
+    pointer-events: none;
+    z-index: 0;
+    line-height: 1;
+    user-select: none;
+    font-weight: 900;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.6;
+  }
+
+  .grid-bg {
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0; opacity: 0.4;
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  header {
+    display: flex; align-items: flex-start; gap: 20px;
+    margin-bottom: 48px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .logo {
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .logo svg { width: 30px; height: 30px; fill: #0a0e0d; }
+
+  .header-text h1 {
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  .header-text h1 span { color: var(--green); }
+
+  .header-text p {
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Status da conexão Baileys */
+  .connection-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    font-family: var(--mono);
+    font-size: 11px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .conn-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .conn-dot.connected    { background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s ease-in-out infinite; }
+  .conn-dot.disconnected { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+  .conn-dot.connecting   { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); animation: pulse 0.8s ease-in-out infinite; }
+
+  .conn-label { color: var(--muted); }
+  .conn-status { color: var(--text); font-weight: 700; }
+
+  .conn-url-wrap {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .conn-url-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 10px;
+    width: 200px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .conn-url-input:focus { border-color: var(--green-dim); color: var(--text); }
+
+  .btn-connect {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--green-dim);
+    background: transparent;
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-connect:hover { background: var(--green-glow); }
+
+  /* Input section */
+  .input-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: var(--border);
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 16px;
+    resize: vertical;
+    min-height: 130px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  textarea::placeholder { color: var(--muted); }
+
+  textarea:focus {
+    border-color: var(--green-dim);
+    box-shadow: 0 0 0 3px var(--green-glow);
+  }
+
+  .input-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .input-meta span {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .counter { font-family: var(--mono); font-size: 11px; color: var(--muted); transition: color 0.2s; }
+  .counter.has-numbers { color: var(--green); }
+
+  .controls { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 22px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-primary { background: var(--green); color: #0a0e0d; }
+  .btn-primary:hover { background: #2de074; box-shadow: 0 0 20px var(--green-glow); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+
+  .btn svg { width: 16px; height: 16px; }
+
+  .progress-bar-wrap {
+    height: 3px; background: var(--border); border-radius: 99px;
+    margin-top: 20px; overflow: hidden; display: none;
+  }
+  .progress-bar-wrap.visible { display: block; }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green-dim), var(--green));
+    border-radius: 99px; width: 0%; transition: width 0.3s ease;
+  }
+
+  .progress-text { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 8px; display: none; }
+  .progress-text.visible { display: block; }
+
+  /* Error banner */
+  .error-banner {
+    display: none;
+    background: rgba(255,77,77,0.08);
+    border: 1px solid rgba(255,77,77,0.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--red);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .error-banner.visible { display: block; }
+
+  /* Stats bar */
+  .stats-bar { display: flex; gap: 12px; margin-bottom: 20px; animation: fadeUp 0.4s ease both; }
+
+  .stat-pill {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 10px;
+    transition: border-color 0.3s;
+  }
+  .stat-pill.active-green { border-color: var(--green-dim); }
+  .stat-pill.active-red   { border-color: var(--red-dim); }
+  .stat-pill.active-yellow{ border-color: #7a6a00; }
+
+  .stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green  { background: var(--green);  box-shadow: 0 0 6px var(--green); }
+  .dot-red    { background: var(--red);    box-shadow: 0 0 6px var(--red); }
+  .dot-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+  .dot-gray   { background: var(--muted); }
+
+  .stat-info { flex: 1; }
+  .stat-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .stat-value { font-size: 22px; font-weight: 800; margin-top: 2px; line-height: 1; }
+  .stat-value.green  { color: var(--green); }
+  .stat-value.red    { color: var(--red); }
+  .stat-value.yellow { color: var(--yellow); }
+  .stat-value.gray   { color: var(--muted); }
+
+  /* Results */
+  .results-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; animation: fadeUp 0.5s ease both;
+  }
+
+  .results-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px; border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .results-title { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+  .filter-tabs { display: flex; gap: 4px; }
+
+  .filter-tab {
+    padding: 5px 12px; border-radius: 6px; border: 1px solid transparent;
+    background: transparent; color: var(--muted);
+    font-family: var(--mono); font-size: 11px; cursor: pointer;
+    transition: all 0.2s; letter-spacing: 0.05em;
+  }
+  .filter-tab.active, .filter-tab:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
+
+  .results-list { max-height: 480px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+
+  .result-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 24px; border-bottom: 1px solid var(--border);
+    transition: background 0.15s; animation: slideIn 0.25s ease both;
+  }
+  .result-item:last-child { border-bottom: none; }
+  .result-item:hover { background: var(--surface2); }
+
+  .result-idx { font-family: var(--mono); font-size: 10px; color: var(--muted); width: 24px; text-align: right; flex-shrink: 0; }
+  .result-number { font-family: var(--mono); font-size: 14px; flex: 1; color: var(--text); }
+
+  .result-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 20px;
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.05em; flex-shrink: 0;
+  }
+
+  .badge-active  { background: rgba(37,211,102,0.12);  color: var(--green);  border: 1px solid rgba(37,211,102,0.3); }
+  .badge-banned  { background: rgba(255,77,77,0.12);   color: var(--red);    border: 1px solid rgba(255,77,77,0.3); }
+  .badge-invalid { background: rgba(245,197,24,0.1);   color: var(--yellow); border: 1px solid rgba(245,197,24,0.25); }
+  .badge-checking{ background: rgba(90,122,103,0.15);  color: var(--muted);  border: 1px solid var(--border); }
+  .badge-error   { background: rgba(255,77,77,0.08);   color: #ff8080;       border: 1px solid rgba(255,77,77,0.2); }
+
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 1.2s ease-in-out infinite; }
+
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--muted); }
+  .empty-state svg { width: 40px; height: 40px; opacity: 0.3; margin-bottom: 12px; }
+  .empty-state p { font-family: var(--mono); font-size: 12px; }
+
+  .export-bar { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
+
+  .disclaimer {
+    margin-top: 32px; padding: 16px 20px;
+    background: rgba(245,197,24,0.05);
+    border: 1px solid rgba(245,197,24,0.15);
+    border-radius: 10px;
+    font-family: var(--mono); font-size: 11px; color: #7a6a10;
+    line-height: 1.6; animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .disclaimer strong { color: var(--yellow); }
+
+  /* Rodapé desenvolvedor */
+  .dev-footer {
+    margin-top: 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--muted);
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .dev-label { color: var(--muted); }
+
+  .dev-name {
+    color: var(--green);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .dev-sep { color: var(--border); }
+
+  .dev-contact {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .dev-contact:hover { color: var(--green); }
+
+  .dev-contact svg {
+    width: 13px; height: 13px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp   { from { opacity: 0; transform: translateY(16px);  } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideIn  { from { opacity: 0; transform: translateX(-8px);  } to { opacity: 1; transform: translateX(0); } }
+  @keyframes pulse    { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+  @keyframes spin     { to { transform: rotate(360deg); } }
+  .spin { animation: spin 1s linear infinite; }
+
+  .results-list::-webkit-scrollbar { width: 4px; }
+  .results-list::-webkit-scrollbar-track { background: transparent; }
+  .results-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  @media (max-width: 560px) {
+    .stats-bar { flex-wrap: wrap; }
+    .stat-pill { min-width: calc(50% - 6px); }
+    .controls { flex-direction: column; }
+    .btn { width: 100%; justify-content: center; }
+    .conn-url-wrap { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<div class="container">
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <span style="font-size:48px;color:#fff;font-family:serif;line-height:1;user-select:none;filter:drop-shadow(0 0 12px rgba(255,255,255,0.3));">秘</span>
+    </div>
+    <div class="header-text">
+      <h1>Px7 <span>Priv Check</span></h1>
+      <p>Painel de Consulta · Backend Baileys</p>
+    </div>
+  </header>
+
+  <!-- Barra de conexão com o backend -->
+  <div class="connection-bar">
+    <div class="conn-dot disconnected" id="connDot"></div>
+    <span class="conn-label">Backend:</span>
+    <span class="conn-status" id="connStatus">Desconectado</span>
+    <div class="conn-url-wrap">
+      <input class="conn-url-input" id="backendUrl" type="text" placeholder="https://seu-app.onrender.com" />
+      <button class="btn-connect" onclick="testConnection()">Testar conexão</button>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="input-section">
+    <div class="section-label">Números para verificar</div>
+    <textarea id="numbersInput" placeholder="Cole os números aqui, um por linha&#10;Ex:&#10;5511999999999&#10;5521988888888&#10;5531977777777"></textarea>
+    <div class="input-meta">
+      <span>Formato: DDI + DDD + Número (sem espaços ou símbolos)</span>
+      <span class="counter" id="counter">0 números</span>
+    </div>
+    <div class="controls">
+      <button class="btn btn-primary" id="checkBtn" onclick="startCheck()" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        Verificar Números
+      </button>
+      <button class="btn btn-secondary" onclick="loadSample()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+        Carregar Exemplo
+      </button>
+      <button class="btn btn-secondary" onclick="clearAll()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        Limpar
+      </button>
+    </div>
+    <div class="progress-bar-wrap" id="progressWrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText"></div>
+    <div class="error-banner" id="errorBanner"></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar" style="display:none">
+    <div class="stat-pill" id="statTotal">
+      <div class="stat-dot dot-gray"></div>
+      <div class="stat-info">
+        <div class="stat-label">Total</div>
+        <div class="stat-value gray" id="totalVal">0</div>
+      </div>
+    </div>
+    <div class="stat-pill" id="statActive">
+      <div class="stat-dot dot-green"></div>
+      <div class="stat-info">
+        <div class="stat-label">Ativos</div>
+        <div class="stat-value green" id="activeVal">0</div>
+      </div>
+    </div>
+    <div class="stat-pill" id="statBanned">
+      <div class="stat-dot dot-red"></div>
+      <div class="stat-info">
+        <div class="stat-label">Banidos</div>
+        <div class="stat-value red" id="bannedVal">0</div>
+      </div>
+    </div>
+    <div class="stat-pill" id="statInvalid">
+      <div class="stat-dot dot-yellow"></div>
+      <div class="stat-info">
+        <div class="stat-label">Inválidos</div>
+        <div class="stat-value yellow" id="invalidVal">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="results-section" id="resultsSection" style="display:none">
+    <div class="results-header">
+      <span class="results-title">Resultados</span>
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterResults('all', this)">Todos</button>
+        <button class="filter-tab" onclick="filterResults('active', this)">Ativos</button>
+        <button class="filter-tab" onclick="filterResults('banned', this)">Banidos</button>
+        <button class="filter-tab" onclick="filterResults('invalid', this)">Inválidos</button>
+      </div>
+    </div>
+    <div class="results-list" id="resultsList"></div>
+  </div>
+
+  <!-- Export -->
+  <div class="export-bar" id="exportBar" style="display:none">
+    <button class="btn btn-secondary" onclick="exportCSV()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Exportar CSV
+    </button>
+    <button class="btn btn-secondary" onclick="copyActives()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+      Copiar Ativos
+    </button>
+  </div>
+
+  <!-- Rodapé do desenvolvedor -->
+  <div class="dev-footer">
+    <span class="dev-label">Desenvolvido por</span>
+    <span class="dev-name">s/6</span>
+    <span class="dev-sep">·</span>
+    <a class="dev-contact" href="https://wa.me/5518910000003" target="_blank">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.556 4.122 1.527 5.854L0 24l6.351-1.504A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.884 0-3.651-.494-5.188-1.357l-.361-.214-3.769.892.942-3.671-.235-.376A9.962 9.962 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      +55 (18) 91000-0003
+    </a>
+  </div>
+</div>
+
+<script>
+  const input    = document.getElementById('numbersInput');
+  const counter  = document.getElementById('counter');
+  const checkBtn = document.getElementById('checkBtn');
+
+  let allResults    = [];
+  let currentFilter = 'all';
+  let backendOnline = false;
+
+  // Detecta automaticamente a URL do backend (funciona local e no Render)
+  document.getElementById('backendUrl').value = window.location.origin;
+
+  // ─── Utilitários de UI ────────────────────────────────────────────────
+  function getBaseUrl() {
+    return document.getElementById('backendUrl').value.replace(/\/$/, '');
+  }
+
+  function setConnStatus(state) {
+    // state: 'connected' | 'disconnected' | 'connecting'
+    const dot    = document.getElementById('connDot');
+    const label  = document.getElementById('connStatus');
+    dot.className = 'conn-dot ' + state;
+    const map = { connected: 'Conectado ✓', disconnected: 'Desconectado', connecting: 'Conectando…' };
+    label.textContent = map[state] || state;
+    backendOnline = state === 'connected';
+    checkBtn.disabled = !backendOnline || parseNumbers(input.value).length === 0;
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorBanner');
+    el.textContent = '⚠ ' + msg;
+    el.classList.add('visible');
+    setTimeout(() => el.classList.remove('visible'), 8000);
+  }
+
+  // ─── Testar conexão ───────────────────────────────────────────────────
+  async function testConnection() {
+    setConnStatus('connecting');
+    document.getElementById('disclaimerUrl').textContent = getBaseUrl();
+    try {
+      const r = await fetch(getBaseUrl() + '/status', { signal: AbortSignal.timeout(5000) });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      // Espera { status: 'connected' | 'qr_pending' | ... }
+      if (data.status === 'connected') {
+        setConnStatus('connected');
+      } else {
+        setConnStatus('disconnected');
+        showError('Backend respondeu, mas o WhatsApp ainda não está autenticado. Acesse ' + getBaseUrl() + '/qr para escanear o QR Code.');
+      }
+    } catch (e) {
+      setConnStatus('disconnected');
+      showError('Não foi possível conectar ao backend (' + e.message + '). Verifique se o servidor está rodando.');
+    }
+  }
+
+  // ─── Verificação real via Baileys ─────────────────────────────────────
+  /**
+   * Chama POST /check com { number: "5511999999999" }
+   * O servidor responde com { number, status, note }
+   * status: "active" | "banned" | "invalid"
+   */
+  async function checkNumber(number) {
+    const r = await fetch(getBaseUrl() + '/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ number }),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!r.ok) {
+      const text = await r.text().catch(() => '');
+      throw new Error('HTTP ' + r.status + (text ? ': ' + text : ''));
+    }
+
+    return await r.json();
+    // Formato esperado: { number, status: 'active'|'banned'|'invalid', note: string }
+  }
+
+  // ─── Input ────────────────────────────────────────────────────────────
+  input.addEventListener('input', () => {
+    const nums  = parseNumbers(input.value);
+    const count = nums.length;
+    counter.textContent  = count + ' número' + (count !== 1 ? 's' : '');
+    counter.className    = 'counter' + (count > 0 ? ' has-numbers' : '');
+    checkBtn.disabled    = count === 0 || !backendOnline;
+  });
+
+  function parseNumbers(text) {
+    return text.split('\n')
+      .map(l => l.trim().replace(/\D/g, ''))
+      .filter(l => l.length >= 10 && l.length <= 15);
+  }
+
+  function loadSample() {
+    input.value = [
+      '5511912345678',
+      '5521987654321',
+      '5531911111111',
+      '5541900000000',
+      '5551922334455',
+      '5561933221100',
+    ].join('\n');
+    input.dispatchEvent(new Event('input'));
+  }
+
+  function clearAll() {
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+    allResults = [];
+    document.getElementById('statsBar').style.display      = 'none';
+    document.getElementById('resultsSection').style.display = 'none';
+    document.getElementById('exportBar').style.display      = 'none';
+    document.getElementById('progressWrap').classList.remove('visible');
+    document.getElementById('progressText').classList.remove('visible');
+    document.getElementById('errorBanner').classList.remove('visible');
+    resetStats();
+  }
+
+  function resetStats() {
+    ['totalVal','activeVal','bannedVal','invalidVal'].forEach(id => {
+      document.getElementById(id).textContent = '0';
+    });
+  }
+
+  // ─── Verificação em lote ──────────────────────────────────────────────
+  let isRunning = false;
+
+  async function startCheck() {
+    if (isRunning || !backendOnline) return;
+    const numbers = parseNumbers(input.value);
+    if (!numbers.length) return;
+
+    isRunning     = true;
+    checkBtn.disabled = true;
+    checkBtn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Verificando...`;
+
+    allResults    = [];
+    currentFilter = 'all';
+    document.querySelectorAll('.filter-tab').forEach((t,i) => t.classList.toggle('active', i === 0));
+    document.getElementById('statsBar').style.display       = 'flex';
+    document.getElementById('resultsSection').style.display = 'block';
+    document.getElementById('exportBar').style.display      = 'none';
+    document.getElementById('progressWrap').classList.add('visible');
+    document.getElementById('progressText').classList.add('visible');
+    document.getElementById('errorBanner').classList.remove('visible');
+    resetStats();
+    document.getElementById('totalVal').textContent = numbers.length;
+    document.getElementById('resultsList').innerHTML = '';
+
+    // Placeholders "verificando…"
+    numbers.forEach((n, i) => {
+      allResults.push({ number: n, status: 'checking', note: '' });
+      appendResultItem({ number: n, status: 'checking', note: '' }, i);
+    });
+
+    let done = 0, active = 0, banned = 0, invalid = 0;
+    let networkErrors = 0;
+
+    for (let i = 0; i < numbers.length; i++) {
+      let res;
+      try {
+        res = await checkNumber(numbers[i]);
+        // Garante que o status é um dos valores esperados
+        if (!['active','banned','invalid'].includes(res.status)) {
+          res.status = 'invalid';
+          res.note   = res.note || 'Resposta inesperada do servidor';
+        }
+      } catch (e) {
+        networkErrors++;
+        res = { number: numbers[i], status: 'error', note: 'Erro: ' + e.message };
+        if (networkErrors >= 3) {
+          showError('Múltiplos erros de rede. Verifique se o backend ainda está respondendo.');
+        }
+      }
+
+      allResults[i] = res;
+
+      if (res.status === 'active')  active++;
+      else if (res.status === 'banned') banned++;
+      else invalid++;
+      done++;
+
+      document.getElementById('activeVal').textContent  = active;
+      document.getElementById('bannedVal').textContent  = banned;
+      document.getElementById('invalidVal').textContent = invalid;
+
+      const pct = Math.round((done / numbers.length) * 100);
+      document.getElementById('progressBar').style.width  = pct + '%';
+      document.getElementById('progressText').textContent = `Verificando ${done} de ${numbers.length} (${pct}%)`;
+
+      updateResultItem(i, res);
+
+      // Pequena pausa para não sobrecarregar o backend
+      if (i < numbers.length - 1) await sleep(200);
+    }
+
+    document.getElementById('progressText').textContent = `✓ Verificação concluída — ${numbers.length} número(s) processado(s)`;
+    document.getElementById('exportBar').style.display  = 'flex';
+    checkBtn.disabled = false;
+    checkBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg> Verificar Novamente`;
+    isRunning = false;
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // ─── Renderização de itens ────────────────────────────────────────────
+  function appendResultItem(res, idx) {
+    const list = document.getElementById('resultsList');
+    const div  = document.createElement('div');
+    div.className = 'result-item';
+    div.id        = 'row-' + idx;
+    div.style.animationDelay = Math.min(idx * 30, 300) + 'ms';
+    div.innerHTML = buildRowHTML(res, idx);
+    list.appendChild(div);
+  }
+
+  function updateResultItem(idx, res) {
+    const row = document.getElementById('row-' + idx);
+    if (row) row.innerHTML = buildRowHTML(res, idx);
+  }
+
+  function buildRowHTML(res, idx) {
+    return `
+      <span class="result-idx">${idx + 1}</span>
+      <span class="result-number">${formatNumber(res.number)}</span>
+      ${badgeHTML(res.status)}
+      ${res.note ? `<span style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:4px">${res.note}</span>` : ''}
+    `;
+  }
+
+  function formatNumber(n) {
+    if (n && n.startsWith('55') && n.length === 13) {
+      return `+55 (${n.slice(2,4)}) ${n.slice(4,9)}-${n.slice(9)}`;
+    }
+    return n ? '+' + n : '—';
+  }
+
+  function badgeHTML(status) {
+    const map = {
+      active:   `<span class="result-badge badge-active"><span class="pulse"></span> ATIVO</span>`,
+      banned:   `<span class="result-badge badge-banned"><span class="pulse"></span> BANIDO</span>`,
+      invalid:  `<span class="result-badge badge-invalid">⚠ INVÁLIDO</span>`,
+      checking: `<span class="result-badge badge-checking"><span class="pulse"></span> ...</span>`,
+      error:    `<span class="result-badge badge-error">✕ ERRO</span>`,
+    };
+    return map[status] || map.invalid;
+  }
+
+  // ─── Filtros ──────────────────────────────────────────────────────────
+  function filterResults(type, tab) {
+    currentFilter = type;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    renderFiltered();
+  }
+
+  function renderFiltered() {
+    const list     = document.getElementById('resultsList');
+    list.innerHTML = '';
+    const filtered = currentFilter === 'all'
+      ? allResults
+      : allResults.filter(r => r.status === currentFilter);
+
+    if (!filtered.length) {
+      list.innerHTML = `<div class="empty-state"><p>Nenhum resultado para este filtro.</p></div>`;
+      return;
+    }
+
+    filtered.forEach((res, i) => {
+      const div = document.createElement('div');
+      div.className = 'result-item';
+      div.style.animationDelay = Math.min(i * 20, 200) + 'ms';
+      div.innerHTML = buildRowHTML(res, allResults.indexOf(res));
+      list.appendChild(div);
+    });
+  }
+
+  // ─── Export ───────────────────────────────────────────────────────────
+  function exportCSV() {
+    const rows = [['#','Número','Status','Nota']];
+    allResults.forEach((r, i) => {
+      rows.push([i + 1, r.number, r.status.toUpperCase(), r.note || '']);
+    });
+    const csv  = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = 'wa_checker_resultado.csv';
+    a.click();
+  }
+
+  function copyActives() {
+    const actives = allResults.filter(r => r.status === 'active').map(r => r.number);
+    navigator.clipboard.writeText(actives.join('\n')).then(() => {
+      const btn  = event.target.closest('.btn');
+      const orig = btn.innerHTML;
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Copiado!`;
+      setTimeout(() => btn.innerHTML = orig, 2000);
+    });
+  }
+</script>
+</body>
+</html>
