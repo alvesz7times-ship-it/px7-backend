@@ -2,13 +2,14 @@
  * WA Checker — Backend Baileys
  * ─────────────────────────────────────────────────────────────────────────────
  * Instalação:
- *   npm install @whiskeysockets/baileys@latest @hapi/boom qrcode-terminal express cors pino
+ *   npm install @whiskeysockets/baileys@latest @hapi/boom qrcode express cors pino
  *
  * Uso:
  *   node server.js
  *
  * Endpoints:
  *   GET  /status  → { status: 'connected' | 'qr_pending' | 'disconnected' }
+ *   GET  /qr      → imagem PNG do QR Code (abra no browser para escanear)
  *   POST /check   → { number: "5511999999999" } → { number, status, note }
  *                   status: 'active' | 'invalid'
  * ─────────────────────────────────────────────────────────────────────────────
@@ -24,7 +25,7 @@ const {
 } = require('@whiskeysockets/baileys');
 
 const { Boom }   = require('@hapi/boom');
-const qrcode     = require('qrcode-terminal');
+const QRCode     = require('qrcode');          // gera PNG — funciona em qualquer ambiente
 const express    = require('express');
 const cors       = require('cors');
 const path       = require('path');
@@ -38,6 +39,7 @@ const AUTH_FOLDER = './auth_info';
 let sock            = null;
 let connectionState = 'disconnected'; // 'disconnected' | 'qr_pending' | 'connected'
 let reconnectTimer  = null;
+let currentQR       = null;           // string bruta do QR — convertida em PNG no endpoint
 
 // ─── Logger silencioso (troque 'silent' por 'debug' para depurar) ─────────────
 const logger = pino({ level: 'silent' });
@@ -83,9 +85,8 @@ async function startBaileys() {
 
     if (qr) {
       connectionState = 'qr_pending';
-      console.log('\n📱  Escaneie o QR Code abaixo com seu WhatsApp:\n');
-      qrcode.generate(qr, { small: true });
-      console.log('\n(aguardando scan…)\n');
+      currentQR = qr;
+      console.log(`📱  QR pronto — acesse http://localhost:${PORT}/qr no browser para escanear`);
     }
 
     if (connection === 'close') {
@@ -110,6 +111,7 @@ async function startBaileys() {
 
     if (connection === 'open') {
       connectionState = 'connected';
+      currentQR = null; // QR não é mais necessário
       console.log('✅  WhatsApp conectado como', sock.user?.id);
     }
   });
@@ -161,6 +163,24 @@ app.get('/', (req, res) => {
 // Status da conexão
 app.get('/status', (req, res) => {
   res.json({ status: connectionState });
+});
+
+// QR Code como imagem PNG — abra no browser e escaneie com o WhatsApp
+app.get('/qr', async (req, res) => {
+  if (connectionState === 'connected') {
+    return res.status(200).send('<p style="font-family:sans-serif;font-size:1.2rem">✅ WhatsApp já está conectado!</p>');
+  }
+  if (!currentQR) {
+    return res.status(503).send('<p style="font-family:sans-serif;font-size:1.2rem">⏳ QR ainda não gerado. Aguarde alguns segundos e recarregue.</p>');
+  }
+  try {
+    const png = await QRCode.toBuffer(currentQR, { scale: 8 });
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'no-store'); // não cachear — QR expira
+    res.send(png);
+  } catch (err) {
+    res.status(500).send('Erro ao gerar QR: ' + err.message);
+  }
 });
 
 // Verificação de número único
@@ -223,7 +243,8 @@ app.post('/check-batch', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`\n🚀  Servidor rodando em http://localhost:${PORT}`);
   console.log(`    Painel:  http://localhost:${PORT}/`);
-  console.log(`    Status:  http://localhost:${PORT}/status\n`);
+  console.log(`    Status:  http://localhost:${PORT}/status`);
+  console.log(`    QR:      http://localhost:${PORT}/qr  ← abra aqui para escanear\n`);
 });
 
 startBaileys();
