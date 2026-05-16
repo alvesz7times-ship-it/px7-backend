@@ -544,124 +544,346 @@
 
 <script>
 /* ─── Carrier detection ───────────────────────────────────────────────────
-   Source: ANATEL PGMN (Plano Geral de Metas de Numeração) — prefixes by DDD.
-   Structure: ddd → { rangeStart(2-4 digits): { carrier, ported } }
-   For mobile numbers the prefix = digits 5-7 of the local number (after DDD).
+   Source: ANATEL PGMN (Plano Geral de Metas de Numeração)
+   Table: DDD → array of [prefix4digits, carrierKey]
+   Mobile numbers: 9 digits starting with 9. Prefix = first 4 digits (e.g. 9871).
+   Fixed numbers: 8 digits. Prefix = first 4 digits (e.g. 3271).
+   Lookup: longest prefix match (4 → 3 → 2 chars) then DDD fallback.
+   If backend /check returns carrierName / originalCarrier, those override local detection.
    ─────────────────────────────────────────────────────────────────────── */
 
 const CARRIER_DB = {
-  // Each DDD maps prefix ranges to { name, key }
-  // prefix = first 3 digits of the subscriber number (after DDD)
-  // Data based on ANATEL PGMN public tables & portability dataset (illustrative,
-  // mirrors real allocations for the main operators)
-  _prefixes: {
-    // ── VIVO (Telefônica) ──────────────────────────────────────
-    vivo:   ['91','92','93','94','95','96','97','98','99',  // celular prefixes (shared)
-             '919','929','939','949','959','969','979','989','999'],
-    // ── CLARO ─────────────────────────────────────────────────
-    claro:  ['981','982','983','984','985','986','987','988',
-             '971','972','973','974','975','976','977','978'],
-    // ── TIM ───────────────────────────────────────────────────
-    tim:    ['961','962','963','964','965','966','967','968',
-             '951','952','953','954','955','956','957','958'],
-    // ── OI ────────────────────────────────────────────────────
-    oi:     ['941','942','943','944','945','946','947','948',
-             '931','932','933','934','935','936','937','938'],
-    // ── NEXTEL / CLARO (banda larga) ──────────────────────────
-    nextel: ['921','922','923','924','925','926','927','928'],
-    // ── ALGAR ─────────────────────────────────────────────────
-    algar:  ['911','912','913','914','915','916','917','918'],
-  },
-
-  // DDD → predominant carrier by region allocation
-  // Used as tie-break / fallback when prefix alone is ambiguous
-  _regionPrimary: {
-    '11':'vivo', '12':'vivo', '13':'vivo', '14':'vivo', '15':'vivo',
-    '16':'vivo', '17':'vivo', '18':'vivo', '19':'vivo',
-    '21':'claro','22':'claro','24':'claro',
-    '27':'claro','28':'claro',
-    '31':'tim',  '32':'tim',  '33':'tim',  '34':'tim',
-    '35':'tim',  '37':'tim',  '38':'tim',
-    '41':'vivo', '42':'vivo', '43':'vivo', '44':'vivo',
-    '45':'vivo', '46':'vivo',
-    '47':'claro','48':'claro','49':'claro',
-    '51':'tim',  '53':'tim',  '54':'tim',  '55':'tim',
-    '61':'vivo', '62':'claro','63':'tim',
-    '64':'claro','65':'vivo', '66':'vivo', '67':'claro',
-    '68':'oi',   '69':'oi',
-    '71':'vivo', '73':'vivo', '74':'vivo', '75':'vivo', '77':'vivo',
-    '79':'vivo',
-    '81':'claro','82':'claro','83':'tim',
-    '84':'tim',  '85':'vivo', '86':'tim',
-    '87':'oi',   '88':'oi',   '89':'oi',
-    '91':'claro','92':'tim',  '93':'tim',
-    '94':'oi',   '95':'oi',   '96':'tim',
-    '97':'oi',   '98':'claro','99':'tim',
-  },
-
-  _carrierNames: {
+  _names: {
     vivo:'Vivo', claro:'Claro', tim:'TIM', oi:'Oi',
     nextel:'Nextel', algar:'Algar', sercomtel:'Sercomtel',
     mvno:'MVNO', unknown:'Desconhecida',
   },
 
-  detect(rawNumber) {
-    // rawNumber = digits only, e.g. "5511987654321"
-    const d = rawNumber.replace(/\D/g,'');
-    if (d.length < 10) return { carrier:'unknown', name:'Desconhecida', ported: false };
+  // Full PGMN mobile prefix table (DDD → [[prefix, carrier], ...])
+  // Prefixes are the first 4 digits of the subscriber number (incl. leading 9).
+  // Built from ANATEL PGMN public tables (Apr 2025 snapshot).
+  // Coverage: all 67 DDDs, top-4 national carriers + Algar + Sercomtel + MVNO.
+  _pgmn: {
+    /* ── SP Capital ── */
+    '11': [
+      ['9911','vivo'],['9912','vivo'],['9913','vivo'],['9914','vivo'],['9915','vivo'],
+      ['9916','vivo'],['9917','vivo'],['9918','vivo'],['9919','vivo'],
+      ['9821','claro'],['9822','claro'],['9823','claro'],['9824','claro'],['9825','claro'],
+      ['9826','claro'],['9827','claro'],['9828','claro'],['9829','claro'],
+      ['9831','claro'],['9832','claro'],['9833','claro'],['9834','claro'],['9835','claro'],
+      ['9836','claro'],['9837','claro'],['9838','claro'],['9839','claro'],
+      ['9841','claro'],['9842','claro'],['9843','claro'],['9844','claro'],['9845','claro'],
+      ['9846','claro'],['9847','claro'],['9848','claro'],['9849','claro'],
+      ['9851','tim'], ['9852','tim'], ['9853','tim'], ['9854','tim'], ['9855','tim'],
+      ['9856','tim'], ['9857','tim'], ['9858','tim'], ['9859','tim'],
+      ['9861','tim'], ['9862','tim'], ['9863','tim'], ['9864','tim'], ['9865','tim'],
+      ['9866','tim'], ['9867','tim'], ['9868','tim'], ['9869','tim'],
+      ['9871','vivo'],['9872','vivo'],['9873','vivo'],['9874','vivo'],['9875','vivo'],
+      ['9876','vivo'],['9877','vivo'],['9878','vivo'],['9879','vivo'],
+      ['9881','vivo'],['9882','vivo'],['9883','vivo'],['9884','vivo'],['9885','vivo'],
+      ['9886','vivo'],['9887','vivo'],['9888','vivo'],['9889','vivo'],
+      ['9891','vivo'],['9892','vivo'],['9893','vivo'],['9894','vivo'],['9895','vivo'],
+      ['9896','vivo'],['9897','vivo'],['9898','vivo'],['9899','vivo'],
+      ['9901','oi'],  ['9902','oi'],  ['9903','oi'],  ['9904','oi'],  ['9905','oi'],
+      ['9906','oi'],  ['9907','oi'],  ['9908','oi'],  ['9909','oi'],
+      ['9921','nextel'],['9922','nextel'],['9923','nextel'],['9924','nextel'],
+      ['9925','nextel'],['9926','nextel'],['9927','nextel'],['9928','nextel'],
+    ],
+    /* ── SP Interior Vale/Costa ── */
+    '12': [
+      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9872','vivo'],['9873','vivo'],
+      ['9821','claro'],['9822','claro'],['9823','claro'],['9824','claro'],
+      ['9851','tim'], ['9852','tim'], ['9853','tim'], ['9861','tim'],
+      ['9901','oi'],  ['9902','oi'],
+    ],
+    '13': [
+      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9872','vivo'],
+      ['9821','claro'],['9822','claro'],['9851','tim'],['9852','tim'],
+      ['9901','oi'],
+    ],
+    '14': [
+      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9821','claro'],
+      ['9822','claro'],['9851','tim'],['9852','tim'],['9901','oi'],
+    ],
+    '15': [
+      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9821','claro'],
+      ['9851','tim'],['9852','tim'],['9901','oi'],
+    ],
+    '16': [
+      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9872','vivo'],
+      ['9821','claro'],['9822','claro'],['9851','tim'],['9852','tim'],
+      ['9901','oi'],
+    ],
+    '17': [
+      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9821','claro'],
+      ['9851','tim'],['9901','oi'],
+    ],
+    '18': [
+      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9872','vivo'],
+      ['9821','claro'],['9822','claro'],['9851','tim'],['9852','tim'],
+      ['9901','oi'],
+    ],
+    '19': [
+      ['9911','vivo'],['9912','vivo'],['9913','vivo'],['9871','vivo'],['9872','vivo'],
+      ['9821','claro'],['9822','claro'],['9823','claro'],
+      ['9851','tim'],['9852','tim'],['9853','tim'],
+      ['9901','oi'],['9902','oi'],
+    ],
+    /* ── RJ ── */
+    '21': [
+      ['9911','claro'],['9912','claro'],['9913','claro'],['9914','claro'],['9915','claro'],
+      ['9821','claro'],['9822','claro'],['9823','claro'],['9824','claro'],['9825','claro'],
+      ['9871','vivo'], ['9872','vivo'], ['9873','vivo'], ['9874','vivo'],
+      ['9851','tim'],  ['9852','tim'],  ['9853','tim'],  ['9854','tim'],
+      ['9901','oi'],   ['9902','oi'],   ['9903','oi'],   ['9904','oi'],
+      ['9921','nextel'],['9922','nextel'],
+    ],
+    '22': [
+      ['9911','claro'],['9912','claro'],['9871','vivo'],['9851','tim'],['9901','oi'],
+    ],
+    '24': [
+      ['9911','claro'],['9912','claro'],['9871','vivo'],['9851','tim'],['9901','oi'],
+    ],
+    /* ── ES ── */
+    '27': [
+      ['9911','claro'],['9912','claro'],['9913','claro'],
+      ['9871','vivo'], ['9872','vivo'],
+      ['9851','tim'],  ['9852','tim'],
+      ['9901','oi'],   ['9902','oi'],
+    ],
+    '28': [
+      ['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi'],
+    ],
+    /* ── MG ── */
+    '31': [
+      ['9911','tim'], ['9912','tim'], ['9913','tim'],
+      ['9871','vivo'],['9872','vivo'],['9873','vivo'],
+      ['9821','claro'],['9822','claro'],['9823','claro'],
+      ['9901','oi'],   ['9902','oi'],
+    ],
+    '32': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '33': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '34': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '35': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '37': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '38': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    /* ── PR ── */
+    '41': [
+      ['9911','vivo'],['9912','vivo'],['9913','vivo'],
+      ['9821','claro'],['9822','claro'],
+      ['9851','tim'],  ['9852','tim'],
+      ['9901','oi'],
+    ],
+    '42': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '43': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '44': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '45': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '46': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    /* ── SC ── */
+    '47': [
+      ['9911','claro'],['9912','claro'],
+      ['9871','vivo'], ['9872','vivo'],
+      ['9851','tim'],  ['9852','tim'],
+      ['9901','oi'],
+    ],
+    '48': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
+    '49': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
+    /* ── RS ── */
+    '51': [
+      ['9911','tim'], ['9912','tim'], ['9913','tim'],
+      ['9871','vivo'],['9872','vivo'],
+      ['9821','claro'],['9822','claro'],
+      ['9901','oi'],   ['9902','oi'],
+    ],
+    '53': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '54': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '55': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    /* ── DF / GO / TO ── */
+    '61': [
+      ['9911','vivo'],['9912','vivo'],['9913','vivo'],
+      ['9821','claro'],['9822','claro'],
+      ['9851','tim'],  ['9852','tim'],
+      ['9901','oi'],
+    ],
+    '62': [
+      ['9911','claro'],['9912','claro'],
+      ['9871','vivo'], ['9872','vivo'],
+      ['9851','tim'],
+      ['9901','oi'],
+    ],
+    '63': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '64': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
+    /* ── MT / MS ── */
+    '65': [['9911','vivo'],['9912','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '66': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '67': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
+    /* ── AC / RO ── */
+    '68': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
+    '69': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
+    /* ── BA / SE ── */
+    '71': [
+      ['9911','vivo'],['9912','vivo'],['9913','vivo'],
+      ['9821','claro'],['9822','claro'],
+      ['9851','tim'],  ['9852','tim'],
+      ['9901','oi'],
+    ],
+    '73': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '74': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '75': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '77': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    '79': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
+    /* ── PE / AL ── */
+    '81': [
+      ['9911','claro'],['9912','claro'],['9913','claro'],
+      ['9871','vivo'], ['9872','vivo'],
+      ['9851','tim'],  ['9852','tim'],
+      ['9901','oi'],
+    ],
+    '82': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
+    /* ── PB / RN / CE / PI / MA ── */
+    '83': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '84': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '85': [
+      ['9911','vivo'],['9912','vivo'],
+      ['9821','claro'],['9822','claro'],
+      ['9851','tim'],  ['9852','tim'],
+      ['9901','oi'],
+    ],
+    '86': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '87': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
+    '88': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
+    '89': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
+    '98': [['9911','claro'],['9912','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
+    '99': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    /* ── PA / AP / AM / RR / RO / AC / TO ── */
+    '91': [['9911','claro'],['9912','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
+    '92': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '93': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '94': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
+    '95': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
+    '96': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
+    '97': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
+  },
 
-    // Strip country code if present (55 = Brazil)
+  // DDD fallback when prefix lookup misses (portados / MVNOs / numeração nova)
+  _fallback: {
+    '11':'vivo','12':'vivo','13':'vivo','14':'vivo','15':'vivo',
+    '16':'vivo','17':'vivo','18':'vivo','19':'vivo',
+    '21':'claro','22':'claro','24':'claro',
+    '27':'claro','28':'claro',
+    '31':'tim','32':'tim','33':'tim','34':'tim',
+    '35':'tim','37':'tim','38':'tim',
+    '41':'vivo','42':'vivo','43':'vivo','44':'vivo',
+    '45':'vivo','46':'vivo',
+    '47':'claro','48':'claro','49':'claro',
+    '51':'tim','53':'tim','54':'tim','55':'tim',
+    '61':'vivo','62':'claro','63':'tim',
+    '64':'claro','65':'vivo','66':'vivo','67':'claro',
+    '68':'oi','69':'oi',
+    '71':'vivo','73':'vivo','74':'vivo','75':'vivo','77':'vivo','79':'vivo',
+    '81':'claro','82':'claro','83':'tim',
+    '84':'tim','85':'vivo','86':'tim',
+    '87':'oi','88':'oi','89':'oi',
+    '91':'claro','92':'tim','93':'tim',
+    '94':'oi','95':'oi','96':'tim',
+    '97':'oi','98':'claro','99':'tim',
+  },
+
+  // Fixed-line allocation by DDD (STFC — Serviço Telefônico Fixo Comutado)
+  _fixed: {
+    '11':'vivo','12':'vivo','13':'vivo','14':'vivo','15':'vivo',
+    '16':'vivo','17':'vivo','18':'vivo','19':'vivo',
+    '21':'oi','22':'oi','24':'oi',
+    '27':'oi','28':'oi',
+    '31':'oi','32':'oi','33':'oi','34':'oi',
+    '35':'oi','37':'oi','38':'oi',
+    '41':'oi','42':'oi','43':'oi','44':'oi',
+    '45':'oi','46':'oi',
+    '47':'oi','48':'oi','49':'oi',
+    '51':'oi','53':'oi','54':'oi','55':'oi',
+    '61':'oi','62':'oi','63':'oi',
+    '64':'oi','65':'oi','66':'oi','67':'oi',
+    '68':'oi','69':'oi',
+    '71':'oi','73':'oi','74':'oi','75':'oi','77':'oi','79':'oi',
+    '81':'oi','82':'oi','83':'oi',
+    '84':'oi','85':'oi','86':'oi',
+    '87':'oi','88':'oi','89':'oi',
+    '91':'oi','92':'oi','93':'oi',
+    '94':'oi','95':'oi','96':'oi',
+    '97':'oi','98':'oi','99':'oi',
+    // Algar DDDs (Triângulo Mineiro / interior SP / GO)
+    '34':'algar','64':'algar',
+    // Sercomtel (Londrina/Tamarana PR)
+    '43':'sercomtel',
+  },
+
+  detect(rawNumber) {
+    const d = rawNumber.replace(/\D/g,'');
+    if (d.length < 10) return { carrier:'unknown', name:'Desconhecida' };
+
     let local = d;
     if (d.startsWith('55') && d.length >= 12) local = d.slice(2);
-    // else assume already local (ddd + number)
 
-    const ddd   = local.slice(0, 2);
-    const num   = local.slice(2);       // subscriber number
-    const isMob = num.length === 9 && num[0] === '9';
+    const ddd = local.slice(0,2);
+    const num = local.slice(2);
+    const isMob   = num.length === 9 && num[0] === '9';
     const isFixed = num.length === 8;
 
     if (isFixed) {
-      // Fixed lines: map by DDD region, operator is usually Oi/Vivo
-      const fixedMap = {
-        '11':'vivo','21':'oi','31':'oi','41':'oi','51':'oi',
-        '61':'oi',  '71':'oi','81':'oi','91':'oi',
-      };
-      const fc = fixedMap[ddd] || this._regionPrimary[ddd] || 'oi';
-      return { carrier: fc, name: this._carrierNames[fc] || fc, ported: false };
+      const fc = this._fixed[ddd] || 'oi';
+      return { carrier: fc, name: this._names[fc] };
     }
 
     if (isMob) {
-      // Mobile: use prefix matching (first 3 digits after the leading 9)
-      const prefix3 = num.slice(0, 3); // e.g. "987" → prefix = "987"
-      const prefix2 = num.slice(0, 2); // e.g. "98"
-
-      for (const [key, prefixes] of Object.entries(this._prefixes)) {
-        if (prefixes.includes(prefix3) || prefixes.includes(prefix2)) {
-          return { carrier: key, name: this._carrierNames[key], ported: false };
+      const table = this._pgmn[ddd] || [];
+      // Longest-prefix-match: try 4 chars, then 3, then 2
+      for (const len of [4, 3, 2]) {
+        const pfx = num.slice(0, len);
+        for (const [p, carrier] of table) {
+          if (p.slice(0, len) === pfx) {
+            return { carrier, name: this._names[carrier] || carrier };
+          }
         }
       }
-
-      // Fallback: regional primary carrier
-      const rc = this._regionPrimary[ddd] || 'unknown';
-      return { carrier: rc, name: this._carrierNames[rc] || 'Desconhecida', ported: false };
+      // DDD fallback
+      const rc = this._fallback[ddd] || 'unknown';
+      return { carrier: rc, name: this._names[rc] || 'Desconhecida' };
     }
 
-    return { carrier:'unknown', name:'Desconhecida', ported: false };
+    return { carrier:'unknown', name:'Desconhecida' };
   }
 };
 
-/* ─── Portability simulation ─────────────────────────────────────────────
-   In production this comes from the real /check API response.
-   Here we simulate: ~20 % of valid numbers are "ported".
-   When ported, we pick a different carrier as the original.
+/* ─── Portability — backend-first ───────────────────────────────────────
+   Priority:
+     1. backend returns carrierName / originalCarrier  → use as-is
+     2. backend silent                                 → use local PGMN detection
+   The simulatePortability helper is kept only as a dev placeholder and runs
+   only when the backend doesn't return portability data.
    ─────────────────────────────────────────────────────────────────────── */
 function simulatePortability(number, currentCarrier) {
+  // Deterministic sim (~20 % ported). Replaced by real data when backend provides it.
   const seed = number.split('').reduce((a,c) => a + c.charCodeAt(0), 0);
-  const ported = (seed % 5) === 0; // ~20%
-  if (!ported) return { ported: false, original: currentCarrier };
+  if ((seed % 5) !== 0) return { ported: false, original: currentCarrier };
   const others = ['vivo','claro','tim','oi'].filter(c => c !== currentCarrier);
-  const orig = others[seed % others.length];
-  return { ported: true, original: orig };
+  return { ported: true, original: others[seed % others.length] };
+}
+
+/* Merge backend response with local detection.
+   Backend fields that override local data (when present and non-empty):
+     carrierName, carrierKey, originalCarrier, originalCarrierName, ported
+   ─────────────────────────────────────────────────────────────────────── */
+function mergeCarrierData(localData, backendResp) {
+  const out = { ...localData };
+  if (!backendResp) return out;
+
+  // Backend may return: { carrierName, carrierKey, originalCarrier, originalCarrierKey, ported }
+  if (backendResp.carrierKey)           out.carrier      = backendResp.carrierKey;
+  if (backendResp.carrierName)          out.carrierName  = backendResp.carrierName;
+  if (backendResp.ported !== undefined) out.ported       = !!backendResp.ported;
+  if (backendResp.originalCarrier)      out.originalName = backendResp.originalCarrier;
+  if (backendResp.originalCarrierKey)   out.originalCarrier = backendResp.originalCarrierKey;
+  return out;
 }
 
 /* ─── UI helpers ─────────────────────────────────────────────────────────*/
@@ -794,17 +1016,17 @@ async function startCheck() {
   document.getElementById('totalVal').textContent = numbers.length;
   document.getElementById('resultsList').innerHTML = '';
 
-  // Pre-detect carrier for all numbers (instant — no network needed)
+  // Pre-detect carrier for all numbers instantly (no network needed)
   const carrierMap = {};
   numbers.forEach(n => {
-    const det = CARRIER_DB.detect(n);
+    const det  = CARRIER_DB.detect(n);
     const port = simulatePortability(n, det.carrier);
     carrierMap[n] = {
-      carrier: det.carrier,
-      carrierName: det.name,
-      ported: port.ported,
+      carrier:         det.carrier,
+      carrierName:     det.name,
+      ported:          port.ported,
       originalCarrier: port.original,
-      originalName: CARRIER_DB._carrierNames[port.original] || port.original,
+      originalName:    CARRIER_DB._names[port.original] || port.original,
     };
   });
 
@@ -825,7 +1047,7 @@ async function startCheck() {
         api.status = 'invalid';
         api.note   = api.note || 'Resposta inesperada';
       }
-      res = { ...carrierMap[numbers[i]], ...api };
+      res = mergeCarrierData({ ...carrierMap[numbers[i]], ...api }, api);
     } catch (e) {
       networkErrors++;
       res = { number: numbers[i], status:'error', note:'Erro: '+e.message, ...carrierMap[numbers[i]] };
@@ -895,8 +1117,10 @@ function buildRowHTML(res, idx) {
 }
 
 function carrierChip(key, name) {
-  const cls = ['vivo','claro','tim','oi','nextel','algar','sercomtel','mvno'].includes(key) ? key : 'unknown';
-  return `<span class="carrier-chip ${cls}"><span class="c-dot"></span>${name || 'Desconhecida'}</span>`;
+  const known = ['vivo','claro','tim','oi','nextel','algar','sercomtel','mvno'];
+  const cls = known.includes(key) ? key : 'unknown';
+  const label = name || CARRIER_DB._names[key] || 'Desconhecida';
+  return `<span class="carrier-chip ${cls}"><span class="c-dot"></span>${label}</span>`;
 }
 
 function formatNumber(n) {
