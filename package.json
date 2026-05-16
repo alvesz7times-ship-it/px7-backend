@@ -1,0 +1,16 @@
+{
+  "name": "px7-priv-check",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.0",
+    "@hapi/boom": "^10.0.1",
+    "qrcode-terminal": "^0.12.0",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "pino": "^8.0.0"
+  }
+}
