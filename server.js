@@ -141,8 +141,8 @@ app.use(cors({ origin: '*', methods: ['GET','POST','OPTIONS'], allowedHeaders: [
 app.options('*', cors());
 app.use(express.json());
 
-// Health check
-app.get('/', (req, res) => {
+// Health check — aceita GET e POST na raiz (Railway faz health check com POST)
+app.all('/', (req, res) => {
   res.json({ ok: true, service: 'Px7 Priv Check', state: connectionState });
 });
 
@@ -171,8 +171,13 @@ app.post('/check', async (req, res) => {
   }
 });
 
+// Catch-all — evita 405 em qualquer rota não mapeada
+app.all('*', (req, res) => {
+  res.status(404).json({ error: 'Rota não encontrada' });
+});
+
 // ─── Inicialização ────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀  Servidor rodando em http://localhost:${PORT}`);
   console.log(`    Acesse o painel em http://localhost:${PORT}/\n`);
 });
