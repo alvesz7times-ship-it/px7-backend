@@ -399,14 +399,13 @@
     </div>
     <div class="header-text">
       <h1>Px7 <span>Priv Check</span></h1>
-      <p>Painel de Consulta · Backend Baileys</p>
+      <p>Painel de Consulta</p>
     </div>
     <div class="header-status">
       <div class="conn-dot disconnected" id="connDot"></div>
       <span class="conn-status" id="connStatus">Aguardando…</span>
     </div>
   </header>
-
 
   <!-- Input -->
   <div class="input-section">
@@ -539,22 +538,19 @@
     setTimeout(() => el.classList.remove('visible'), 8000);
   }
 
-  // ─── Testar conexão (com retry automático) ───────────────────────────
+  // ─── Testar conexão (automático, com retry) ──────────────────────────
   let _retryTimer = null;
 
   async function testConnection() {
     if (_retryTimer) { clearTimeout(_retryTimer); _retryTimer = null; }
     setConnStatus('connecting');
-
     try {
       const ctrl = new AbortController();
       const tid  = setTimeout(() => ctrl.abort(), 12000);
       const r    = await fetch(getBaseUrl() + '/status', { signal: ctrl.signal });
       clearTimeout(tid);
-
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const data = await r.json();
-
       if (data.status === 'connected') {
         setConnStatus('connected');
         _retryTimer = setTimeout(testConnection, 30000);
@@ -562,19 +558,18 @@
         setConnStatus('disconnected');
         const qrUrl = getBaseUrl() + '/qr';
         const el = document.getElementById('errorBanner');
-        el.innerHTML = '⚠ WhatsApp não autenticado. <a href="' + qrUrl + '" target="_blank" style="color:var(--green);text-decoration:underline">Clique aqui para escanear o QR Code</a>';
+        el.innerHTML = '⚠ WhatsApp não autenticado. <a href="' + qrUrl + '" target="_blank" style="color:var(--green);text-decoration:underline">Abrir QR Code</a>';
         el.classList.add('visible');
         _retryTimer = setTimeout(testConnection, 8000);
       }
     } catch (e) {
       setConnStatus('disconnected');
-      const msg = e.name === 'AbortError' ? 'Timeout (>12s) — aguarde o cold start do Render' : e.message;
-      showError('Não foi possível conectar ao backend (' + msg + '). Tente novamente em alguns segundos.');
+      const msg = e.name === 'AbortError' ? 'Timeout (>12s) — aguarde o cold start' : e.message;
+      showError('Não foi possível conectar ao backend (' + msg + ').');
       _retryTimer = setTimeout(testConnection, 15000);
     }
   }
 
-  // Conecta automaticamente ao carregar
   window.addEventListener('DOMContentLoaded', () => testConnection());
 
   // ─── Verificação real via Baileys ─────────────────────────────────────
