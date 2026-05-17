@@ -22,288 +22,67 @@
     --mono: 'Space Mono', monospace;
     --sans: 'Syne', sans-serif;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::after {
-    content: '秘';
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: clamp(320px, 50vw, 600px);
-    color: rgba(255,255,255,0.12);
-    font-family: 'Noto Serif JP', serif;
-    pointer-events: none;
-    z-index: 0;
-    line-height: 1;
-    user-select: none;
-    font-weight: 900;
-  }
-
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0; opacity: 0.6;
-  }
-
-  .grid-bg {
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none; z-index: 0; opacity: 0.4;
-  }
-
-  .container {
-    position: relative; z-index: 1;
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 48px 24px 80px;
-  }
-
-  header {
-    display: flex; align-items: flex-start; gap: 20px;
-    margin-bottom: 36px;
-    animation: fadeDown 0.6s ease both;
-  }
-
-  .logo {
-    width: 52px; height: 52px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-
-  .header-text h1 {
-    font-size: clamp(22px, 4vw, 32px);
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    line-height: 1.1;
-  }
-
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+  body::after { content: '秘'; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: clamp(320px,50vw,600px); color: rgba(255,255,255,0.12); font-family: serif; pointer-events: none; z-index: 0; line-height: 1; user-select: none; font-weight: 900; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; opacity: 0.6; }
+  .grid-bg { position: fixed; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; opacity: 0.4; }
+  .container { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 48px 24px 80px; }
+  header { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 36px; animation: fadeDown 0.6s ease both; }
+  .logo { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .header-text h1 { font-size: clamp(22px,4vw,32px); font-weight: 800; letter-spacing: -0.5px; line-height: 1.1; }
   .header-text h1 span { color: var(--green); }
-
-  .header-text p {
-    margin-top: 6px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  .header-status {
-    margin-left: auto;
-    display: flex; align-items: center; gap: 8px;
-    font-family: var(--mono); font-size: 11px;
-  }
-
-  .conn-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%; flex-shrink: 0;
-    transition: background 0.3s, box-shadow 0.3s;
-  }
-
-  .conn-dot.connected    { background: var(--green);  box-shadow: 0 0 6px var(--green);  animation: pulse 2s ease-in-out infinite; }
-  .conn-dot.disconnected { background: var(--red);    box-shadow: 0 0 6px var(--red); }
+  .header-text p { margin-top: 6px; font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .header-status { margin-left: auto; display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; }
+  .conn-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s, box-shadow 0.3s; }
+  .conn-dot.connected    { background: var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s ease-in-out infinite; }
+  .conn-dot.disconnected { background: var(--red); box-shadow: 0 0 6px var(--red); }
   .conn-dot.connecting   { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); animation: pulse 0.8s ease-in-out infinite; }
-
   .conn-status { color: var(--muted); font-weight: 700; font-size: 11px; }
-
-  /* ── Tab navigation ── */
-  .tab-nav {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 6px;
-    animation: fadeUp 0.5s 0.05s ease both;
-  }
-
-  .tab-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--muted);
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.22s;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-  }
-
+  .tab-nav { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 6px; animation: fadeUp 0.5s 0.05s ease both; }
+  .tab-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--muted); font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.22s; letter-spacing: 0.01em; white-space: nowrap; }
   .tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
-
-  .tab-btn:hover {
-    color: var(--text);
-    background: var(--surface2);
-  }
-
-  .tab-btn.active {
-    background: var(--bg);
-    border-color: var(--border);
-    color: var(--green);
-    box-shadow: 0 0 0 1px var(--green-dim);
-  }
-
-  /* ── Tab panels ── */
+  .tab-btn:hover { color: var(--text); background: var(--surface2); }
+  .tab-btn.active { background: var(--bg); border-color: var(--border); color: var(--green); box-shadow: 0 0 0 1px var(--green-dim); }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
-
-  /* ── Shared input section ── */
-  .input-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-    margin-bottom: 24px;
-    animation: fadeUp 0.6s 0.1s ease both;
-  }
-
-  .section-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 16px;
-    display: flex; align-items: center; gap: 8px;
-  }
-
-  .section-label::after {
-    content: '';
-    flex: 1; height: 1px;
-    background: var(--border);
-  }
-
-  textarea {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.7;
-    padding: 16px;
-    resize: vertical;
-    min-height: 130px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-  }
-
+  .input-section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-bottom: 24px; animation: fadeUp 0.6s 0.1s ease both; }
+  .section-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: var(--mono); font-size: 13px; line-height: 1.7; padding: 16px; resize: vertical; min-height: 130px; transition: border-color 0.2s, box-shadow 0.2s; outline: none; }
   textarea::placeholder { color: var(--muted); }
-
-  textarea:focus {
-    border-color: var(--green-dim);
-    box-shadow: 0 0 0 3px var(--green-glow);
-  }
-
-  .input-meta {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-top: 10px;
-  }
-
-  .input-meta span {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-  }
-
+  textarea:focus { border-color: var(--green-dim); box-shadow: 0 0 0 3px var(--green-glow); }
+  .input-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+  .input-meta span { font-family: var(--mono); font-size: 11px; color: var(--muted); }
   .counter { font-family: var(--mono); font-size: 11px; color: var(--muted); transition: color 0.2s; }
   .counter.has-numbers { color: var(--green); }
-
   .controls { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 11px 22px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.2s;
-    letter-spacing: 0.01em;
-  }
-
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 8px; border: none; cursor: pointer; font-family: var(--sans); font-size: 14px; font-weight: 600; transition: all 0.2s; letter-spacing: 0.01em; }
   .btn-primary { background: var(--green); color: #0a0e0d; }
   .btn-primary:hover { background: #2de074; box-shadow: 0 0 20px var(--green-glow); transform: translateY(-1px); }
   .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-
   .btn-secondary { background: transparent; color: var(--muted); border: 1px solid var(--border); }
   .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
-
   .btn svg { width: 16px; height: 16px; }
-
-  .progress-bar-wrap {
-    height: 3px; background: var(--border); border-radius: 99px;
-    margin-top: 20px; overflow: hidden; display: none;
-  }
+  .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red-dim); }
+  .btn-danger:hover { background: rgba(255,77,77,0.08); color: #ff8080; }
+  .progress-bar-wrap { height: 3px; background: var(--border); border-radius: 99px; margin-top: 20px; overflow: hidden; display: none; }
   .progress-bar-wrap.visible { display: block; }
-
-  .progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--green-dim), var(--green));
-    border-radius: 99px; width: 0%; transition: width 0.3s ease;
-  }
-
+  .progress-bar { height: 100%; background: linear-gradient(90deg, var(--green-dim), var(--green)); border-radius: 99px; width: 0%; transition: width 0.3s ease; }
   .progress-text { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 8px; display: none; }
   .progress-text.visible { display: block; }
-
-  .error-banner {
-    display: none;
-    background: rgba(255,77,77,0.08);
-    border: 1px solid rgba(255,77,77,0.25);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--red);
-    margin-top: 12px;
-    line-height: 1.5;
-  }
+  .error-banner { display: none; background: rgba(255,77,77,0.08); border: 1px solid rgba(255,77,77,0.25); border-radius: 8px; padding: 10px 14px; font-family: var(--mono); font-size: 11px; color: var(--red); margin-top: 12px; line-height: 1.5; }
   .error-banner.visible { display: block; }
-
   .stats-bar { display: flex; gap: 12px; margin-bottom: 20px; animation: fadeUp 0.4s ease both; }
-
-  .stat-pill {
-    flex: 1; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px 16px;
-    display: flex; align-items: center; gap: 10px;
-    transition: border-color 0.3s;
-  }
+  .stat-pill { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; align-items: center; gap: 10px; transition: border-color 0.3s; }
   .stat-pill.active-green { border-color: var(--green-dim); }
   .stat-pill.active-red   { border-color: var(--red-dim); }
   .stat-pill.active-yellow{ border-color: #7a6a00; }
-
   .stat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .dot-green  { background: var(--green);  box-shadow: 0 0 6px var(--green); }
   .dot-red    { background: var(--red);    box-shadow: 0 0 6px var(--red); }
   .dot-yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
   .dot-gray   { background: var(--muted); }
-
   .stat-info { flex: 1; }
   .stat-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
   .stat-value { font-size: 22px; font-weight: 800; margin-top: 2px; line-height: 1; }
@@ -311,396 +90,102 @@
   .stat-value.red    { color: var(--red); }
   .stat-value.yellow { color: var(--yellow); }
   .stat-value.gray   { color: var(--muted); }
-
-  .results-section {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden; animation: fadeUp 0.5s ease both;
-  }
-
-  .results-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 24px; border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-  }
-
+  .results-section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; animation: fadeUp 0.5s ease both; }
+  .results-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--border); background: var(--surface2); }
   .results-title { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-
   .filter-tabs { display: flex; gap: 4px; }
-
-  .filter-tab {
-    padding: 5px 12px; border-radius: 6px; border: 1px solid transparent;
-    background: transparent; color: var(--muted);
-    font-family: var(--mono); font-size: 11px; cursor: pointer;
-    transition: all 0.2s; letter-spacing: 0.05em;
-  }
+  .filter-tab { padding: 5px 12px; border-radius: 6px; border: 1px solid transparent; background: transparent; color: var(--muted); font-family: var(--mono); font-size: 11px; cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em; }
   .filter-tab.active, .filter-tab:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
-
-  .results-col-header {
-    display: grid;
-    grid-template-columns: 28px 1fr 140px 130px 90px;
-    gap: 10px;
-    padding: 8px 24px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(10,14,13,0.6);
-  }
-
-  .col-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
+  .results-col-header { display: grid; grid-template-columns: 28px 1fr 140px 130px 90px; gap: 10px; padding: 8px 24px; border-bottom: 1px solid var(--border); background: rgba(10,14,13,0.6); }
+  .col-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
   .results-list { max-height: 480px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
-
-  .result-item {
-    display: grid;
-    grid-template-columns: 28px 1fr 140px 130px 90px;
-    gap: 10px;
-    align-items: center;
-    padding: 12px 24px;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-    animation: slideIn 0.25s ease both;
-  }
+  .result-item { display: grid; grid-template-columns: 28px 1fr 140px 130px 90px; gap: 10px; align-items: center; padding: 12px 24px; border-bottom: 1px solid var(--border); transition: background 0.15s; animation: slideIn 0.25s ease both; }
   .result-item:last-child { border-bottom: none; }
   .result-item:hover { background: var(--surface2); }
-
   .result-idx { font-family: var(--mono); font-size: 10px; color: var(--muted); text-align: right; }
   .result-number { font-family: var(--mono); font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  .carrier-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 9px;
-    border-radius: 6px;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
-    border: 1px solid;
-  }
-
-  .carrier-chip.vivo   { color: #a78bfa; border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.07); }
-  .carrier-chip.claro  { color: #fb923c; border-color: rgba(251,146,60,0.3);  background: rgba(251,146,60,0.07); }
-  .carrier-chip.tim    { color: #60a5fa; border-color: rgba(96,165,250,0.3);  background: rgba(96,165,250,0.07); }
-  .carrier-chip.oi     { color: #fbbf24; border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.07); }
-  .carrier-chip.nextel { color: #34d399; border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.07); }
-  .carrier-chip.algar  { color: #f472b6; border-color: rgba(244,114,182,0.3); background: rgba(244,114,182,0.07); }
-  .carrier-chip.sercomtel { color: #a3e635; border-color: rgba(163,230,53,0.3); background: rgba(163,230,53,0.07); }
-  .carrier-chip.mvno   { color: #94a3b8; border-color: rgba(148,163,184,0.3); background: rgba(148,163,184,0.07); }
-  .carrier-chip.unknown{ color: var(--muted); border-color: var(--border);     background: transparent; }
-
+  .carrier-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 6px; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.05em; white-space: nowrap; border: 1px solid; }
+  .carrier-chip.vivo      { color: #a78bfa; border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.07); }
+  .carrier-chip.claro     { color: #fb923c; border-color: rgba(251,146,60,0.3);  background: rgba(251,146,60,0.07); }
+  .carrier-chip.tim       { color: #60a5fa; border-color: rgba(96,165,250,0.3);  background: rgba(96,165,250,0.07); }
+  .carrier-chip.oi        { color: #fbbf24; border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.07); }
+  .carrier-chip.nextel    { color: #34d399; border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.07); }
+  .carrier-chip.algar     { color: #f472b6; border-color: rgba(244,114,182,0.3); background: rgba(244,114,182,0.07); }
+  .carrier-chip.sercomtel { color: #a3e635; border-color: rgba(163,230,53,0.3);  background: rgba(163,230,53,0.07); }
+  .carrier-chip.mvno      { color: #94a3b8; border-color: rgba(148,163,184,0.3); background: rgba(148,163,184,0.07); }
+  .carrier-chip.unknown   { color: var(--muted); border-color: var(--border);     background: transparent; }
   .c-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-
-  .result-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 12px; border-radius: 20px;
-    font-family: var(--mono); font-size: 11px; font-weight: 700;
-    letter-spacing: 0.05em; white-space: nowrap;
-  }
-
-  .badge-active  { background: rgba(37,211,102,0.12);  color: var(--green);  border: 1px solid rgba(37,211,102,0.3); }
-  .badge-banned  { background: rgba(255,77,77,0.12);   color: var(--red);    border: 1px solid rgba(255,77,77,0.3); }
-  .badge-invalid { background: rgba(245,197,24,0.1);   color: var(--yellow); border: 1px solid rgba(245,197,24,0.25); }
-  .badge-checking{ background: rgba(90,122,103,0.15);  color: var(--muted);  border: 1px solid var(--border); }
-  .badge-error   { background: rgba(255,77,77,0.08);   color: #ff8080;       border: 1px solid rgba(255,77,77,0.2); }
-
+  .result-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; white-space: nowrap; }
+  .badge-active   { background: rgba(37,211,102,0.12);  color: var(--green);  border: 1px solid rgba(37,211,102,0.3); }
+  .badge-banned   { background: rgba(255,77,77,0.12);   color: var(--red);    border: 1px solid rgba(255,77,77,0.3); }
+  .badge-invalid  { background: rgba(245,197,24,0.1);   color: var(--yellow); border: 1px solid rgba(245,197,24,0.25); }
+  .badge-checking { background: rgba(90,122,103,0.15);  color: var(--muted);  border: 1px solid var(--border); }
+  .badge-error    { background: rgba(255,77,77,0.08);   color: #ff8080;       border: 1px solid rgba(255,77,77,0.2); }
   .pulse { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 1.2s ease-in-out infinite; }
-
   .empty-state { text-align: center; padding: 60px 24px; color: var(--muted); }
   .empty-state p { font-family: var(--mono); font-size: 12px; }
-
   .export-bar { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
-
-  .disclaimer {
-    margin-top: 32px; padding: 16px 20px;
-    background: rgba(245,197,24,0.05);
-    border: 1px solid rgba(245,197,24,0.15);
-    border-radius: 10px;
-    font-family: var(--mono); font-size: 11px; color: #7a6a10;
-    line-height: 1.6; animation: fadeUp 0.6s 0.3s ease both;
-  }
-  .disclaimer strong { color: var(--yellow); }
-
-  .dev-footer {
-    margin-top: 16px;
-    display: flex; align-items: center; gap: 10px;
-    font-family: var(--mono); font-size: 11px;
-    color: var(--muted);
-    animation: fadeUp 0.6s 0.4s ease both;
-  }
-
+  .dev-footer { margin-top: 16px; display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11px; color: var(--muted); animation: fadeUp 0.6s 0.4s ease both; }
   .dev-name { color: var(--green); font-weight: 700; letter-spacing: 0.05em; }
   .dev-sep  { color: var(--border); }
-
-  .dev-contact {
-    display: inline-flex; align-items: center; gap: 6px;
-    color: var(--muted); text-decoration: none; transition: color 0.2s;
-  }
+  .dev-contact { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
   .dev-contact:hover { color: var(--green); }
   .dev-contact svg { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
-
-  /* ═══════════════════════════════════════════════════════
-     DATORA TAB STYLES
-  ═══════════════════════════════════════════════════════ */
-
-  /* Drop zone */
-  .drop-zone {
-    border: 2px dashed var(--border);
-    border-radius: 14px;
-    padding: 52px 28px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.25s, background 0.25s;
-    position: relative;
-    background: var(--bg);
-  }
-
-  .drop-zone:hover,
-  .drop-zone.drag-over {
-    border-color: var(--green-dim);
-    background: rgba(37,211,102,0.03);
-  }
-
-  .drop-zone.has-file {
-    border-color: var(--green-dim);
-    border-style: solid;
-    background: rgba(37,211,102,0.04);
-  }
-
-  .drop-zone input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-  }
-
-  .drop-icon {
-    width: 48px; height: 48px;
-    margin: 0 auto 16px;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    color: var(--muted);
-    transition: color 0.2s, border-color 0.2s;
-  }
-
-  .drop-zone.has-file .drop-icon {
-    color: var(--green);
-    border-color: var(--green-dim);
-  }
-
+  .drop-zone { border: 2px dashed var(--border); border-radius: 14px; padding: 52px 28px; text-align: center; cursor: pointer; transition: border-color 0.25s, background 0.25s; position: relative; background: var(--bg); }
+  .drop-zone:hover, .drop-zone.drag-over { border-color: var(--green-dim); background: rgba(37,211,102,0.03); }
+  .drop-zone.has-file { border-color: var(--green-dim); border-style: solid; background: rgba(37,211,102,0.04); }
+  .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .drop-icon { width: 48px; height: 48px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--muted); transition: color 0.2s, border-color 0.2s; }
+  .drop-zone.has-file .drop-icon { color: var(--green); border-color: var(--green-dim); }
   .drop-icon svg { width: 22px; height: 22px; }
-
-  .drop-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-
-  .drop-subtitle {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  .drop-file-name {
-    margin-top: 12px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--green);
-    background: rgba(37,211,102,0.08);
-    border: 1px solid rgba(37,211,102,0.2);
-    border-radius: 6px;
-    padding: 6px 14px;
-    display: inline-block;
-  }
-
-  /* JSON preview */
-  .json-preview-wrap {
-    margin-top: 20px;
-    display: none;
-  }
-
+  .drop-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .drop-subtitle { font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.6; }
+  .drop-file-name { margin-top: 12px; font-family: var(--mono); font-size: 12px; color: var(--green); background: rgba(37,211,102,0.08); border: 1px solid rgba(37,211,102,0.2); border-radius: 6px; padding: 6px 14px; display: inline-block; }
+  .json-preview-wrap { margin-top: 20px; display: none; }
   .json-preview-wrap.visible { display: block; }
-
-  .json-preview-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 10px;
-  }
-
-  .json-preview-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .json-stats {
-    display: flex; gap: 8px;
-  }
-
-  .json-stat-chip {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--muted);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 3px 9px;
-  }
-
-  .json-stat-chip.highlight {
-    color: var(--green);
-    border-color: var(--green-dim);
-    background: rgba(37,211,102,0.06);
-  }
-
-  .json-tree {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    max-height: 240px;
-    overflow-y: auto;
-    font-family: var(--mono);
-    font-size: 12px;
-    line-height: 1.7;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-  }
-
-  /* Datora results table */
-  .datora-col-header {
-    display: grid;
-    grid-template-columns: 28px 1fr 1fr 1fr 120px;
-    gap: 10px;
-    padding: 8px 24px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(10,14,13,0.6);
-  }
-
-  .datora-row {
-    display: grid;
-    grid-template-columns: 28px 1fr 1fr 1fr 120px;
-    gap: 10px;
-    align-items: center;
-    padding: 12px 24px;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-    animation: slideIn 0.25s ease both;
-  }
-
+  .json-preview-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .json-preview-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .json-stats { display: flex; gap: 8px; }
+  .json-stat-chip { font-family: var(--mono); font-size: 10px; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; padding: 3px 9px; }
+  .json-stat-chip.highlight { color: var(--green); border-color: var(--green-dim); background: rgba(37,211,102,0.06); }
+  .json-tree { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; max-height: 240px; overflow-y: auto; font-family: var(--mono); font-size: 12px; line-height: 1.7; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+  .datora-col-header { display: grid; grid-template-columns: 28px 1fr 1fr 1fr 120px; gap: 10px; padding: 8px 24px; border-bottom: 1px solid var(--border); background: rgba(10,14,13,0.6); }
+  .datora-row { display: grid; grid-template-columns: 28px 1fr 1fr 1fr 120px; gap: 10px; align-items: center; padding: 12px 24px; border-bottom: 1px solid var(--border); transition: background 0.15s; animation: slideIn 0.25s ease both; }
   .datora-row:last-child { border-bottom: none; }
   .datora-row:hover { background: var(--surface2); }
-
-  .datora-cell {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
+  .datora-cell { font-family: var(--mono); font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .datora-cell.muted { color: var(--muted); }
-
-  .field-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    background: rgba(37,211,102,0.08);
-    color: var(--green);
-    border: 1px solid rgba(37,211,102,0.2);
-  }
-
-  .datora-search {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 12px;
-    padding: 9px 14px 9px 38px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-
+  .datora-search { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--mono); font-size: 12px; padding: 9px 14px 9px 38px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
   .datora-search::placeholder { color: var(--muted); }
-
-  .datora-search:focus {
-    border-color: var(--green-dim);
-    box-shadow: 0 0 0 3px var(--green-glow);
-  }
-
-  .search-wrap {
-    position: relative;
-    margin-bottom: 14px;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 12px; top: 50%;
-    transform: translateY(-50%);
-    width: 14px; height: 14px;
-    color: var(--muted);
-    pointer-events: none;
-  }
-
-  /* Pagination */
-  .datora-pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 24px;
-    border-top: 1px solid var(--border);
-    background: var(--surface2);
-  }
-
-  .page-info {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-  }
-
+  .datora-search:focus { border-color: var(--green-dim); box-shadow: 0 0 0 3px var(--green-glow); }
+  .search-wrap { position: relative; margin-bottom: 14px; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--muted); pointer-events: none; }
+  .datora-pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; border-top: 1px solid var(--border); background: var(--surface2); }
+  .page-info { font-family: var(--mono); font-size: 11px; color: var(--muted); }
   .page-btns { display: flex; gap: 6px; }
-
-  .page-btn {
-    padding: 5px 12px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
+  .page-btn { padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-family: var(--mono); font-size: 11px; cursor: pointer; transition: all 0.2s; }
   .page-btn:hover:not(:disabled) { border-color: var(--muted); color: var(--text); }
   .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
   .page-btn.active { background: var(--bg); border-color: var(--green-dim); color: var(--green); }
 
-  /* JSON key coloring */
-  .jk { color: #60a5fa; }   /* key */
-  .js { color: #fbbf24; }   /* string value */
-  .jn { color: #34d399; }   /* number value */
-  .jb { color: #f472b6; }   /* boolean */
+  /* ── Banner de base carregada ── */
+  .base-loaded-banner {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: rgba(37,211,102,0.06);
+    border: 1px solid rgba(37,211,102,0.25);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-family: var(--mono); font-size: 11px; color: var(--green);
+    animation: fadeUp 0.3s ease both;
+  }
+  .base-loaded-info { display: flex; align-items: center; gap: 8px; }
+  .base-loaded-meta { color: var(--muted); margin-top: 2px; font-size: 10px; }
+
+  .jk { color: #60a5fa; }
+  .js { color: #fbbf24; }
+  .jn { color: #34d399; }
+  .jb { color: #f472b6; }
   .jnull { color: var(--muted); }
 
   @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
@@ -710,13 +195,9 @@
   @keyframes spin     { to { transform: rotate(360deg); } }
   .spin { animation: spin 1s linear infinite; }
 
-  .results-list::-webkit-scrollbar { width: 4px; }
-  .results-list::-webkit-scrollbar-track { background: transparent; }
-  .results-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .json-tree::-webkit-scrollbar { width: 4px; }
-  .json-tree::-webkit-scrollbar-track { background: transparent; }
-  .json-tree::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .results-list::-webkit-scrollbar, .json-tree::-webkit-scrollbar { width: 4px; }
+  .results-list::-webkit-scrollbar-track, .json-tree::-webkit-scrollbar-track { background: transparent; }
+  .results-list::-webkit-scrollbar-thumb, .json-tree::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
   @media (max-width: 680px) {
     .results-col-header { grid-template-columns: 24px 1fr 110px 80px; }
@@ -738,7 +219,6 @@
 </head>
 <body>
 <div class="grid-bg"></div>
-
 <div class="container">
   <header>
     <div class="logo">
@@ -754,7 +234,6 @@
     </div>
   </header>
 
-  <!-- ── Tab navigation ── -->
   <nav class="tab-nav">
     <button class="tab-btn active" onclick="switchTab('checker', this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -766,11 +245,8 @@
     </button>
   </nav>
 
-  <!-- ════════════════════════════════════════
-       TAB 1 — Verificar Números (original)
-  ════════════════════════════════════════ -->
+  <!-- TAB 1 — Verificar Números -->
   <div class="tab-panel active" id="panel-checker">
-
     <div class="input-section">
       <div class="section-label">Números para verificar</div>
       <textarea id="numbersInput" placeholder="Cole os números aqui, um por linha&#10;Ex:&#10;5511999999999&#10;5521988888888&#10;5531977777777"></textarea>
@@ -792,42 +268,16 @@
           Limpar
         </button>
       </div>
-      <div class="progress-bar-wrap" id="progressWrap">
-        <div class="progress-bar" id="progressBar"></div>
-      </div>
+      <div class="progress-bar-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
       <div class="progress-text" id="progressText"></div>
       <div class="error-banner" id="errorBanner"></div>
     </div>
 
     <div class="stats-bar" id="statsBar" style="display:none">
-      <div class="stat-pill" id="statTotal">
-        <div class="stat-dot dot-gray"></div>
-        <div class="stat-info">
-          <div class="stat-label">Total</div>
-          <div class="stat-value gray" id="totalVal">0</div>
-        </div>
-      </div>
-      <div class="stat-pill" id="statActive">
-        <div class="stat-dot dot-green"></div>
-        <div class="stat-info">
-          <div class="stat-label">Ativos</div>
-          <div class="stat-value green" id="activeVal">0</div>
-        </div>
-      </div>
-      <div class="stat-pill" id="statBanned">
-        <div class="stat-dot dot-red"></div>
-        <div class="stat-info">
-          <div class="stat-label">Banidos</div>
-          <div class="stat-value red" id="bannedVal">0</div>
-        </div>
-      </div>
-      <div class="stat-pill" id="statInvalid">
-        <div class="stat-dot dot-yellow"></div>
-        <div class="stat-info">
-          <div class="stat-label">Inválidos</div>
-          <div class="stat-value yellow" id="invalidVal">0</div>
-        </div>
-      </div>
+      <div class="stat-pill"><div class="stat-dot dot-gray"></div><div class="stat-info"><div class="stat-label">Total</div><div class="stat-value gray" id="totalVal">0</div></div></div>
+      <div class="stat-pill"><div class="stat-dot dot-green"></div><div class="stat-info"><div class="stat-label">Ativos</div><div class="stat-value green" id="activeVal">0</div></div></div>
+      <div class="stat-pill"><div class="stat-dot dot-red"></div><div class="stat-info"><div class="stat-label">Banidos</div><div class="stat-value red" id="bannedVal">0</div></div></div>
+      <div class="stat-pill"><div class="stat-dot dot-yellow"></div><div class="stat-info"><div class="stat-label">Inválidos</div><div class="stat-value yellow" id="invalidVal">0</div></div></div>
     </div>
 
     <div class="results-section" id="resultsSection" style="display:none">
@@ -860,24 +310,34 @@
         Copiar Ativos
       </button>
     </div>
+  </div>
 
-  </div><!-- /panel-checker -->
-
-  <!-- ════════════════════════════════════════
-       TAB 2 — Consulta Números Datora
-  ════════════════════════════════════════ -->
+  <!-- TAB 2 — Consulta Números Datora -->
   <div class="tab-panel" id="panel-datora">
 
-    <!-- ── ADMIN VIEW (só aparece com ?admin=2007) ── -->
+    <!-- ADMIN VIEW -->
     <div id="datora-admin-view" style="display:none">
-
       <div class="input-section">
         <div class="section-label">
           <svg style="width:12px;height:12px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Modo Admin — Arquivo JSON Datora
         </div>
 
-        <!-- Drop zone -->
+        <!-- Banner: base já carregada no localStorage -->
+        <div class="base-loaded-banner" id="adminLoadedBanner" style="display:none">
+          <div>
+            <div class="base-loaded-info">
+              <div class="stat-dot dot-green" style="animation:pulse 2s ease-in-out infinite"></div>
+              <strong id="adminLoadedTitle">Base carregada</strong>
+            </div>
+            <div class="base-loaded-meta" id="adminLoadedMeta"></div>
+          </div>
+          <button class="btn btn-danger" style="padding:7px 14px;font-size:12px" onclick="clearBaseLS()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Apagar Base
+          </button>
+        </div>
+
         <div class="drop-zone" id="datoraDrop">
           <input type="file" id="datoraFileInput" accept=".json,application/json">
           <div class="drop-icon" id="dropIcon">
@@ -890,7 +350,6 @@
           <div class="drop-file-name" id="dropFileName" style="display:none"></div>
         </div>
 
-        <!-- JSON preview -->
         <div class="json-preview-wrap" id="jsonPreviewWrap">
           <div class="json-preview-header">
             <span class="json-preview-label">Prévia do arquivo</span>
@@ -902,42 +361,23 @@
         <div class="controls" style="margin-top:20px">
           <button class="btn btn-primary" id="datoraLoadBtn" disabled onclick="loadDatoraData()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-            Carregar Dados
+            Salvar Base
           </button>
           <button class="btn btn-secondary" onclick="clearDatora()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            Limpar
+            Cancelar
           </button>
         </div>
         <div class="error-banner" id="datoraError"></div>
       </div>
 
-      <!-- Admin datora results (tabela completa) -->
+      <!-- Tabela completa admin -->
       <div id="datoraResultsWrap" style="display:none">
         <div class="stats-bar">
-          <div class="stat-pill active-green">
-            <div class="stat-dot dot-green"></div>
-            <div class="stat-info">
-              <div class="stat-label">Total Registros</div>
-              <div class="stat-value green" id="dTotalVal">0</div>
-            </div>
-          </div>
-          <div class="stat-pill">
-            <div class="stat-dot dot-gray"></div>
-            <div class="stat-info">
-              <div class="stat-label">Campos</div>
-              <div class="stat-value gray" id="dFieldsVal">0</div>
-            </div>
-          </div>
-          <div class="stat-pill">
-            <div class="stat-dot dot-yellow"></div>
-            <div class="stat-info">
-              <div class="stat-label">Exibindo</div>
-              <div class="stat-value yellow" id="dShowingVal">0</div>
-            </div>
-          </div>
+          <div class="stat-pill active-green"><div class="stat-dot dot-green"></div><div class="stat-info"><div class="stat-label">Total Registros</div><div class="stat-value green" id="dTotalVal">0</div></div></div>
+          <div class="stat-pill"><div class="stat-dot dot-gray"></div><div class="stat-info"><div class="stat-label">Campos</div><div class="stat-value gray" id="dFieldsVal">0</div></div></div>
+          <div class="stat-pill"><div class="stat-dot dot-yellow"></div><div class="stat-info"><div class="stat-label">Exibindo</div><div class="stat-value yellow" id="dShowingVal">0</div></div></div>
         </div>
-
         <div class="results-section">
           <div class="results-header" style="flex-wrap:wrap;gap:10px">
             <span class="results-title">Números Datora</span>
@@ -958,15 +398,12 @@
           </div>
         </div>
       </div>
+    </div>
 
-    </div><!-- /datora-admin-view -->
-
-    <!-- ── USER VIEW (para todos sem o parâmetro) ── -->
+    <!-- USER VIEW -->
     <div id="datora-user-view" style="display:none">
-
       <div class="input-section">
         <div class="section-label">Consultar Número na Base Datora</div>
-
         <div style="margin-bottom:18px">
           <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:10px">
             Digite o número completo com DDI+DDD para verificar se está cadastrado na base
@@ -974,15 +411,7 @@
           <div style="display:flex;gap:10px;align-items:stretch">
             <div class="search-wrap" style="flex:1;margin:0">
               <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <input
-                class="datora-search"
-                id="userQueryInput"
-                placeholder="Ex: 5511999999999"
-                style="padding-right:14px"
-                oninput="onUserQueryInput()"
-                onkeydown="if(event.key==='Enter') consultarNumero()"
-                maxlength="15"
-              >
+              <input class="datora-search" id="userQueryInput" placeholder="Ex: 5511999999999" style="padding-right:14px" oninput="onUserQueryInput()" onkeydown="if(event.key==='Enter') consultarNumero()" maxlength="15">
             </div>
             <button class="btn btn-primary" id="userQueryBtn" onclick="consultarNumero()" disabled style="white-space:nowrap">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -991,23 +420,18 @@
           </div>
         </div>
 
-        <!-- Aviso base não carregada -->
         <div id="userNoBaseMsg" style="display:none;background:rgba(245,197,24,0.06);border:1px solid rgba(245,197,24,0.2);border-radius:8px;padding:12px 16px;font-family:var(--mono);font-size:11px;color:#7a6a10;line-height:1.6">
           ⚠ Base de dados ainda não foi carregada pelo administrador. Aguarde e tente novamente mais tarde.
         </div>
-
-        <!-- Resultado da consulta -->
         <div id="userQueryResult" style="display:none"></div>
-
         <div class="error-banner" id="userQueryError"></div>
       </div>
-
-    </div><!-- /datora-user-view -->
+    </div>
 
   </div><!-- /panel-datora -->
 
   <div class="dev-footer">
-    <span class="dev-label">Desenvolvido por</span>
+    <span>Desenvolvido por</span>
     <span class="dev-name">s/6</span>
     <span class="dev-sep">·</span>
     <a class="dev-contact" href="https://wa.me/5518910000003" target="_blank">
@@ -1018,7 +442,17 @@
 </div>
 
 <script>
-/* ─── Tab switching ─────────────────────────────────────────────────────*/
+/* ═══════════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════════ */
+const LS_KEY      = 'px7_datora_base';
+const LS_META_KEY = 'px7_datora_meta';
+const ADMIN_KEY   = '2007';
+const isAdmin     = new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
+
+/* ═══════════════════════════════════════════════
+   TAB SWITCHING
+═══════════════════════════════════════════════ */
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1026,104 +460,22 @@ function switchTab(id, btn) {
   btn.classList.add('active');
 }
 
-/* ─── Carrier detection ─────────────────────────────────────────────────*/
+/* ═══════════════════════════════════════════════
+   CARRIER DETECTION
+═══════════════════════════════════════════════ */
 const CARRIER_DB = {
-  _names: {
-    vivo:'Vivo', claro:'Claro', tim:'TIM', oi:'Oi',
-    nextel:'Nextel', algar:'Algar', sercomtel:'Sercomtel',
-    mvno:'MVNO', unknown:'Desconhecida',
-  },
+  _names: { vivo:'Vivo', claro:'Claro', tim:'TIM', oi:'Oi', nextel:'Nextel', algar:'Algar', sercomtel:'Sercomtel', mvno:'MVNO', unknown:'Desconhecida' },
   _pgmn: {
-    '11': [
-      ['9911','vivo'],['9912','vivo'],['9913','vivo'],['9914','vivo'],['9915','vivo'],
-      ['9916','vivo'],['9917','vivo'],['9918','vivo'],['9919','vivo'],
-      ['9821','claro'],['9822','claro'],['9823','claro'],['9824','claro'],['9825','claro'],
-      ['9826','claro'],['9827','claro'],['9828','claro'],['9829','claro'],
-      ['9831','claro'],['9832','claro'],['9833','claro'],['9834','claro'],['9835','claro'],
-      ['9836','claro'],['9837','claro'],['9838','claro'],['9839','claro'],
-      ['9841','claro'],['9842','claro'],['9843','claro'],['9844','claro'],['9845','claro'],
-      ['9846','claro'],['9847','claro'],['9848','claro'],['9849','claro'],
-      ['9851','tim'], ['9852','tim'], ['9853','tim'], ['9854','tim'], ['9855','tim'],
-      ['9856','tim'], ['9857','tim'], ['9858','tim'], ['9859','tim'],
-      ['9861','tim'], ['9862','tim'], ['9863','tim'], ['9864','tim'], ['9865','tim'],
-      ['9866','tim'], ['9867','tim'], ['9868','tim'], ['9869','tim'],
-      ['9871','vivo'],['9872','vivo'],['9873','vivo'],['9874','vivo'],['9875','vivo'],
-      ['9876','vivo'],['9877','vivo'],['9878','vivo'],['9879','vivo'],
-      ['9881','vivo'],['9882','vivo'],['9883','vivo'],['9884','vivo'],['9885','vivo'],
-      ['9886','vivo'],['9887','vivo'],['9888','vivo'],['9889','vivo'],
-      ['9891','vivo'],['9892','vivo'],['9893','vivo'],['9894','vivo'],['9895','vivo'],
-      ['9896','vivo'],['9897','vivo'],['9898','vivo'],['9899','vivo'],
-      ['9901','oi'],  ['9902','oi'],  ['9903','oi'],  ['9904','oi'],  ['9905','oi'],
-      ['9906','oi'],  ['9907','oi'],  ['9908','oi'],  ['9909','oi'],
-      ['9921','nextel'],['9922','nextel'],['9923','nextel'],['9924','nextel'],
-      ['9925','nextel'],['9926','nextel'],['9927','nextel'],['9928','nextel'],
-    ],
-    '21': [
-      ['9911','claro'],['9912','claro'],['9913','claro'],['9914','claro'],['9915','claro'],
-      ['9821','claro'],['9822','claro'],['9823','claro'],['9824','claro'],['9825','claro'],
-      ['9871','vivo'], ['9872','vivo'], ['9873','vivo'], ['9874','vivo'],
-      ['9851','tim'],  ['9852','tim'],  ['9853','tim'],  ['9854','tim'],
-      ['9901','oi'],   ['9902','oi'],   ['9903','oi'],   ['9904','oi'],
-      ['9921','nextel'],['9922','nextel'],
-    ],
-    '31': [
-      ['9911','tim'], ['9912','tim'], ['9913','tim'],
-      ['9871','vivo'],['9872','vivo'],['9873','vivo'],
-      ['9821','claro'],['9822','claro'],['9823','claro'],
-      ['9901','oi'],   ['9902','oi'],
-    ],
-    '51': [
-      ['9911','tim'], ['9912','tim'], ['9913','tim'],
-      ['9871','vivo'],['9872','vivo'],
-      ['9821','claro'],['9822','claro'],
-      ['9901','oi'],   ['9902','oi'],
-    ],
-    '71': [
-      ['9911','vivo'],['9912','vivo'],['9913','vivo'],
-      ['9821','claro'],['9822','claro'],
-      ['9851','tim'],  ['9852','tim'],
-      ['9901','oi'],
-    ],
-    '81': [
-      ['9911','claro'],['9912','claro'],['9913','claro'],
-      ['9871','vivo'], ['9872','vivo'],
-      ['9851','tim'],  ['9852','tim'],
-      ['9901','oi'],
-    ],
-    '85': [
-      ['9911','vivo'],['9912','vivo'],
-      ['9821','claro'],['9822','claro'],
-      ['9851','tim'],  ['9852','tim'],
-      ['9901','oi'],
-    ],
+    '11': [['9911','vivo'],['9912','vivo'],['9913','vivo'],['9914','vivo'],['9915','vivo'],['9916','vivo'],['9917','vivo'],['9918','vivo'],['9919','vivo'],['9821','claro'],['9822','claro'],['9823','claro'],['9824','claro'],['9825','claro'],['9826','claro'],['9827','claro'],['9828','claro'],['9829','claro'],['9831','claro'],['9832','claro'],['9833','claro'],['9834','claro'],['9835','claro'],['9836','claro'],['9837','claro'],['9838','claro'],['9839','claro'],['9841','claro'],['9842','claro'],['9843','claro'],['9844','claro'],['9845','claro'],['9846','claro'],['9847','claro'],['9848','claro'],['9849','claro'],['9851','tim'],['9852','tim'],['9853','tim'],['9854','tim'],['9855','tim'],['9856','tim'],['9857','tim'],['9858','tim'],['9859','tim'],['9861','tim'],['9862','tim'],['9863','tim'],['9864','tim'],['9865','tim'],['9866','tim'],['9867','tim'],['9868','tim'],['9869','tim'],['9871','vivo'],['9872','vivo'],['9873','vivo'],['9874','vivo'],['9875','vivo'],['9876','vivo'],['9877','vivo'],['9878','vivo'],['9879','vivo'],['9881','vivo'],['9882','vivo'],['9883','vivo'],['9884','vivo'],['9885','vivo'],['9886','vivo'],['9887','vivo'],['9888','vivo'],['9889','vivo'],['9891','vivo'],['9892','vivo'],['9893','vivo'],['9894','vivo'],['9895','vivo'],['9896','vivo'],['9897','vivo'],['9898','vivo'],['9899','vivo'],['9901','oi'],['9902','oi'],['9903','oi'],['9904','oi'],['9905','oi'],['9906','oi'],['9907','oi'],['9908','oi'],['9909','oi'],['9921','nextel'],['9922','nextel'],['9923','nextel'],['9924','nextel'],['9925','nextel'],['9926','nextel'],['9927','nextel'],['9928','nextel']],
+    '21': [['9911','claro'],['9912','claro'],['9913','claro'],['9914','claro'],['9915','claro'],['9821','claro'],['9822','claro'],['9823','claro'],['9824','claro'],['9825','claro'],['9871','vivo'],['9872','vivo'],['9873','vivo'],['9874','vivo'],['9851','tim'],['9852','tim'],['9853','tim'],['9854','tim'],['9901','oi'],['9902','oi'],['9903','oi'],['9904','oi'],['9921','nextel'],['9922','nextel']],
+    '31': [['9911','tim'],['9912','tim'],['9913','tim'],['9871','vivo'],['9872','vivo'],['9873','vivo'],['9821','claro'],['9822','claro'],['9823','claro'],['9901','oi'],['9902','oi']],
+    '51': [['9911','tim'],['9912','tim'],['9913','tim'],['9871','vivo'],['9872','vivo'],['9821','claro'],['9822','claro'],['9901','oi'],['9902','oi']],
+    '71': [['9911','vivo'],['9912','vivo'],['9913','vivo'],['9821','claro'],['9822','claro'],['9851','tim'],['9852','tim'],['9901','oi']],
+    '81': [['9911','claro'],['9912','claro'],['9913','claro'],['9871','vivo'],['9872','vivo'],['9851','tim'],['9852','tim'],['9901','oi']],
+    '85': [['9911','vivo'],['9912','vivo'],['9821','claro'],['9822','claro'],['9851','tim'],['9852','tim'],['9901','oi']],
   },
-  _fallback: {
-    '11':'vivo','12':'vivo','13':'vivo','14':'vivo','15':'vivo',
-    '16':'vivo','17':'vivo','18':'vivo','19':'vivo',
-    '21':'claro','22':'claro','24':'claro',
-    '27':'claro','28':'claro',
-    '31':'tim','32':'tim','33':'tim','34':'tim',
-    '35':'tim','37':'tim','38':'tim',
-    '41':'vivo','42':'vivo','43':'vivo','44':'vivo',
-    '45':'vivo','46':'vivo',
-    '47':'claro','48':'claro','49':'claro',
-    '51':'tim','53':'tim','54':'tim','55':'tim',
-    '61':'vivo','62':'claro','63':'tim',
-    '64':'claro','65':'vivo','66':'vivo','67':'claro',
-    '68':'oi','69':'oi',
-    '71':'vivo','73':'vivo','74':'vivo','75':'vivo','77':'vivo','79':'vivo',
-    '81':'claro','82':'claro','83':'tim',
-    '84':'tim','85':'vivo','86':'tim',
-    '87':'oi','88':'oi','89':'oi',
-    '91':'claro','92':'tim','93':'tim',
-    '94':'oi','95':'oi','96':'tim',
-    '97':'oi','98':'claro','99':'tim',
-  },
-  _fixed: {
-    '11':'vivo','12':'vivo','13':'vivo','14':'vivo','15':'vivo',
-    '16':'vivo','17':'vivo','18':'vivo','19':'vivo',
-    '34':'algar','43':'sercomtel','64':'algar',
-  },
+  _fallback: {'11':'vivo','12':'vivo','13':'vivo','14':'vivo','15':'vivo','16':'vivo','17':'vivo','18':'vivo','19':'vivo','21':'claro','22':'claro','24':'claro','27':'claro','28':'claro','31':'tim','32':'tim','33':'tim','34':'tim','35':'tim','37':'tim','38':'tim','41':'vivo','42':'vivo','43':'vivo','44':'vivo','45':'vivo','46':'vivo','47':'claro','48':'claro','49':'claro','51':'tim','53':'tim','54':'tim','55':'tim','61':'vivo','62':'claro','63':'tim','64':'claro','65':'vivo','66':'vivo','67':'claro','68':'oi','69':'oi','71':'vivo','73':'vivo','74':'vivo','75':'vivo','77':'vivo','79':'vivo','81':'claro','82':'claro','83':'tim','84':'tim','85':'vivo','86':'tim','87':'oi','88':'oi','89':'oi','91':'claro','92':'tim','93':'tim','94':'oi','95':'oi','96':'tim','97':'oi','98':'claro','99':'tim'},
+  _fixed: {'11':'vivo','12':'vivo','13':'vivo','14':'vivo','15':'vivo','16':'vivo','17':'vivo','18':'vivo','19':'vivo','34':'algar','43':'sercomtel','64':'algar'},
   detect(rawNumber) {
     const d = rawNumber.replace(/\D/g,'');
     if (d.length < 10) return { carrier:'unknown', name:'Desconhecida' };
@@ -1131,49 +483,42 @@ const CARRIER_DB = {
     if (d.startsWith('55') && d.length >= 12) local = d.slice(2);
     const ddd = local.slice(0,2);
     const num = local.slice(2);
-    const isMob   = num.length === 9 && num[0] === '9';
+    const isMob = num.length === 9 && num[0] === '9';
     const isFixed = num.length === 8;
-    if (isFixed) {
-      const fc = this._fixed[ddd] || 'oi';
-      return { carrier: fc, name: this._names[fc] };
-    }
+    if (isFixed) { const fc = this._fixed[ddd]||'oi'; return { carrier:fc, name:this._names[fc] }; }
     if (isMob) {
       const table = this._pgmn[ddd] || [];
-      for (const len of [4, 3, 2]) {
-        const pfx = num.slice(0, len);
-        for (const [p, carrier] of table) {
-          if (p.slice(0, len) === pfx) return { carrier, name: this._names[carrier] || carrier };
-        }
-      }
-      const rc = this._fallback[ddd] || 'unknown';
-      return { carrier: rc, name: this._names[rc] || 'Desconhecida' };
+      for (const len of [4,3,2]) { const pfx = num.slice(0,len); for (const [p,carrier] of table) { if (p.slice(0,len)===pfx) return { carrier, name:this._names[carrier]||carrier }; } }
+      const rc = this._fallback[ddd]||'unknown'; return { carrier:rc, name:this._names[rc]||'Desconhecida' };
     }
     return { carrier:'unknown', name:'Desconhecida' };
   }
 };
 
 function simulatePortability(number, currentCarrier) {
-  const seed = number.split('').reduce((a,c) => a + c.charCodeAt(0), 0);
-  if ((seed % 5) !== 0) return { ported: false, original: currentCarrier };
-  const others = ['vivo','claro','tim','oi'].filter(c => c !== currentCarrier);
-  return { ported: true, original: others[seed % others.length] };
+  const seed = number.split('').reduce((a,c) => a+c.charCodeAt(0), 0);
+  if ((seed%5) !== 0) return { ported:false, original:currentCarrier };
+  const others = ['vivo','claro','tim','oi'].filter(c => c!==currentCarrier);
+  return { ported:true, original:others[seed%others.length] };
 }
 
 function mergeCarrierData(localData, backendResp) {
-  const out = { ...localData };
+  const out = {...localData};
   if (!backendResp) return out;
-  if (backendResp.carrierKey)           out.carrier      = backendResp.carrierKey;
-  if (backendResp.carrierName)          out.carrierName  = backendResp.carrierName;
-  if (backendResp.ported !== undefined) out.ported       = !!backendResp.ported;
-  if (backendResp.originalCarrier)      out.originalName = backendResp.originalCarrier;
+  if (backendResp.carrierKey)           out.carrier       = backendResp.carrierKey;
+  if (backendResp.carrierName)          out.carrierName   = backendResp.carrierName;
+  if (backendResp.ported !== undefined) out.ported        = !!backendResp.ported;
+  if (backendResp.originalCarrier)      out.originalName  = backendResp.originalCarrier;
   if (backendResp.originalCarrierKey)   out.originalCarrier = backendResp.originalCarrierKey;
   return out;
 }
 
-/* ─── UI helpers (checker) ──────────────────────────────────────────────*/
-const input   = document.getElementById('numbersInput');
-const counter = document.getElementById('counter');
-const checkBtn= document.getElementById('checkBtn');
+/* ═══════════════════════════════════════════════
+   CHECKER TAB
+═══════════════════════════════════════════════ */
+const input    = document.getElementById('numbersInput');
+const counter  = document.getElementById('counter');
+const checkBtn = document.getElementById('checkBtn');
 
 let allResults    = [];
 let currentFilter = 'all';
@@ -1205,9 +550,9 @@ async function testConnection() {
   try {
     const ctrl = new AbortController();
     const tid  = setTimeout(() => ctrl.abort(), 12000);
-    const r    = await fetch(getBaseUrl() + '/status', { signal: ctrl.signal });
+    const r    = await fetch(getBaseUrl()+'/status', { signal:ctrl.signal });
     clearTimeout(tid);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if (!r.ok) throw new Error('HTTP '+r.status);
     const data = await r.json();
     if (data.status === 'connected') {
       setConnStatus('connected');
@@ -1215,52 +560,51 @@ async function testConnection() {
     } else {
       setConnStatus('disconnected');
       const el = document.getElementById('errorBanner');
-      el.innerHTML = '⚠ WhatsApp não autenticado. <a href="' + getBaseUrl() + '/qr" target="_blank" style="color:var(--green);text-decoration:underline">Abrir QR Code</a>';
+      el.innerHTML = '⚠ WhatsApp não autenticado. <a href="'+getBaseUrl()+'/qr" target="_blank" style="color:var(--green);text-decoration:underline">Abrir QR Code</a>';
       el.classList.add('visible');
       _retryTimer = setTimeout(testConnection, 8000);
     }
-  } catch (e) {
+  } catch(e) {
     setConnStatus('disconnected');
-    showError('Não foi possível conectar ao backend (' + (e.name === 'AbortError' ? 'Timeout' : e.message) + ').');
+    showError('Não foi possível conectar ao backend ('+(e.name==='AbortError'?'Timeout':e.message)+').');
     _retryTimer = setTimeout(testConnection, 15000);
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => testConnection());
+window.addEventListener('DOMContentLoaded', () => {
+  testConnection();
+  if (isAdmin) {
+    document.getElementById('datora-admin-view').style.display = 'block';
+    setupAdminFileInputs();
+    checkAdminLoadedBanner();
+  } else {
+    document.getElementById('datora-user-view').style.display = 'block';
+    checkUserBaseAvailability();
+  }
+});
 
 async function checkNumber(number) {
-  const r = await fetch(getBaseUrl() + '/check', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ number }),
-    signal: AbortSignal.timeout(15000),
+  const r = await fetch(getBaseUrl()+'/check', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ number }), signal:AbortSignal.timeout(15000),
   });
-  if (!r.ok) throw new Error('HTTP ' + r.status);
+  if (!r.ok) throw new Error('HTTP '+r.status);
   return await r.json();
 }
 
 input.addEventListener('input', () => {
   const nums = parseNumbers(input.value);
-  counter.textContent = nums.length + ' número' + (nums.length !== 1 ? 's' : '');
-  counter.className   = 'counter' + (nums.length > 0 ? ' has-numbers' : '');
-  checkBtn.disabled   = nums.length === 0 || !backendOnline;
+  counter.textContent = nums.length+' número'+(nums.length!==1?'s':'');
+  counter.className   = 'counter'+(nums.length>0?' has-numbers':'');
+  checkBtn.disabled   = nums.length===0 || !backendOnline;
 });
 
 function parseNumbers(text) {
-  return text.split('\n')
-    .map(l => l.trim().replace(/\D/g,''))
-    .filter(l => l.length >= 10 && l.length <= 15);
+  return text.split('\n').map(l => l.trim().replace(/\D/g,'')).filter(l => l.length>=10 && l.length<=15);
 }
 
 function loadSample() {
-  input.value = [
-    '5511912345678',
-    '5521987654321',
-    '5531911111111',
-    '5541900000000',
-    '5551922334455',
-    '5561933221100',
-  ].join('\n');
+  input.value = ['5511912345678','5521987654321','5531911111111','5541900000000','5551922334455','5561933221100'].join('\n');
   input.dispatchEvent(new Event('input'));
 }
 
@@ -1268,11 +612,11 @@ function clearAll() {
   input.value = '';
   input.dispatchEvent(new Event('input'));
   allResults = [];
-  ['statsBar','resultsSection','exportBar'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['statsBar','resultsSection','exportBar'].forEach(id => document.getElementById(id).style.display='none');
   document.getElementById('progressWrap').classList.remove('visible');
   document.getElementById('progressText').classList.remove('visible');
   document.getElementById('errorBanner').classList.remove('visible');
-  ['totalVal','activeVal','bannedVal','invalidVal'].forEach(id => document.getElementById(id).textContent = '0');
+  ['totalVal','activeVal','bannedVal','invalidVal'].forEach(id => document.getElementById(id).textContent='0');
 }
 
 let isRunning = false;
@@ -1281,79 +625,53 @@ async function startCheck() {
   if (isRunning || !backendOnline) return;
   const numbers = parseNumbers(input.value);
   if (!numbers.length) return;
-
   isRunning = true;
   checkBtn.disabled = true;
   checkBtn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Verificando...`;
-
-  allResults    = [];
-  currentFilter = 'all';
-  document.querySelectorAll('.filter-tab').forEach((t,i) => t.classList.toggle('active', i === 0));
+  allResults = []; currentFilter = 'all';
+  document.querySelectorAll('.filter-tab').forEach((t,i) => t.classList.toggle('active',i===0));
   document.getElementById('statsBar').style.display       = 'flex';
   document.getElementById('resultsSection').style.display = 'block';
   document.getElementById('exportBar').style.display      = 'none';
   document.getElementById('progressWrap').classList.add('visible');
   document.getElementById('progressText').classList.add('visible');
   document.getElementById('errorBanner').classList.remove('visible');
-  ['totalVal','activeVal','bannedVal','invalidVal'].forEach(id => document.getElementById(id).textContent = '0');
+  ['totalVal','activeVal','bannedVal','invalidVal'].forEach(id => document.getElementById(id).textContent='0');
   document.getElementById('totalVal').textContent = numbers.length;
   document.getElementById('resultsList').innerHTML = '';
 
   const carrierMap = {};
   numbers.forEach(n => {
-    const det  = CARRIER_DB.detect(n);
+    const det = CARRIER_DB.detect(n);
     const port = simulatePortability(n, det.carrier);
-    carrierMap[n] = {
-      carrier:         det.carrier,
-      carrierName:     det.name,
-      ported:          port.ported,
-      originalCarrier: port.original,
-      originalName:    CARRIER_DB._names[port.original] || port.original,
-    };
+    carrierMap[n] = { carrier:det.carrier, carrierName:det.name, ported:port.ported, originalCarrier:port.original, originalName:CARRIER_DB._names[port.original]||port.original };
   });
-
-  numbers.forEach((n, i) => {
-    const ci = carrierMap[n];
-    allResults.push({ number:n, status:'checking', note:'', ...ci });
-    appendResultItem(allResults[i], i);
-  });
+  numbers.forEach((n,i) => { allResults.push({ number:n, status:'checking', note:'', ...carrierMap[n] }); appendResultItem(allResults[i],i); });
 
   let done=0, active=0, banned=0, invalid=0, networkErrors=0;
-
-  for (let i = 0; i < numbers.length; i++) {
+  for (let i=0; i<numbers.length; i++) {
     let res;
     try {
       const api = await checkNumber(numbers[i]);
-      if (!['active','banned','invalid'].includes(api.status)) {
-        api.status = 'invalid';
-        api.note   = api.note || 'Resposta inesperada';
-      }
-      res = mergeCarrierData({ ...carrierMap[numbers[i]], ...api }, api);
-    } catch (e) {
+      if (!['active','banned','invalid'].includes(api.status)) { api.status='invalid'; api.note=api.note||'Resposta inesperada'; }
+      res = mergeCarrierData({...carrierMap[numbers[i]],...api},api);
+    } catch(e) {
       networkErrors++;
-      res = { number: numbers[i], status:'error', note:'Erro: '+e.message, ...carrierMap[numbers[i]] };
-      if (networkErrors >= 3) showError('Múltiplos erros de rede. Verifique o backend.');
+      res = { number:numbers[i], status:'error', note:'Erro: '+e.message, ...carrierMap[numbers[i]] };
+      if (networkErrors>=3) showError('Múltiplos erros de rede. Verifique o backend.');
     }
-
     allResults[i] = res;
-
-    if (res.status === 'active')  active++;
-    else if (res.status === 'banned') banned++;
-    else invalid++;
+    if (res.status==='active') active++; else if (res.status==='banned') banned++; else invalid++;
     done++;
-
     document.getElementById('activeVal').textContent  = active;
     document.getElementById('bannedVal').textContent  = banned;
     document.getElementById('invalidVal').textContent = invalid;
-
-    const pct = Math.round((done / numbers.length) * 100);
-    document.getElementById('progressBar').style.width  = pct + '%';
+    const pct = Math.round((done/numbers.length)*100);
+    document.getElementById('progressBar').style.width  = pct+'%';
     document.getElementById('progressText').textContent = `Verificando ${done} de ${numbers.length} (${pct}%)`;
-
     updateResultItem(i, allResults[i]);
-    if (i < numbers.length - 1) await sleep(200);
+    if (i < numbers.length-1) await sleep(200);
   }
-
   document.getElementById('progressText').textContent = `✓ Concluído — ${numbers.length} número(s) processado(s)`;
   document.getElementById('exportBar').style.display  = 'flex';
   checkBtn.disabled = false;
@@ -1361,53 +679,44 @@ async function startCheck() {
   isRunning = false;
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function sleep(ms) { return new Promise(r => setTimeout(r,ms)); }
 
 function appendResultItem(res, idx) {
   const list = document.getElementById('resultsList');
   const div  = document.createElement('div');
   div.className = 'result-item';
-  div.id = 'row-' + idx;
-  div.style.animationDelay = Math.min(idx * 30, 300) + 'ms';
-  div.innerHTML = buildRowHTML(res, idx);
+  div.id = 'row-'+idx;
+  div.style.animationDelay = Math.min(idx*30,300)+'ms';
+  div.innerHTML = buildRowHTML(res,idx);
   list.appendChild(div);
 }
 
 function updateResultItem(idx, res) {
-  const row = document.getElementById('row-' + idx);
-  if (row) row.innerHTML = buildRowHTML(res, idx);
+  const row = document.getElementById('row-'+idx);
+  if (row) row.innerHTML = buildRowHTML(res,idx);
 }
 
 function buildRowHTML(res, idx) {
   const numFmt  = formatNumber(res.number);
-  const curChip = res.status === 'checking'
+  const curChip = res.status==='checking'
     ? `<span class="carrier-chip unknown"><span class="c-dot"></span>...</span>`
     : carrierChip(res.carrier, res.carrierName);
   const origChip = res.ported
-    ? carrierChip(res.originalCarrier, res.originalName + ' ★')
+    ? carrierChip(res.originalCarrier, res.originalName+' ★')
     : `<span style="font-family:var(--mono);font-size:10px;color:var(--muted)">—</span>`;
-
-  return `
-    <span class="result-idx">${idx + 1}</span>
-    <span class="result-number">${numFmt}</span>
-    <span class="cell-carrier">${curChip}</span>
-    <span class="cell-orig">${origChip}</span>
-    <span class="cell-status">${badgeHTML(res.status)}</span>
-  `;
+  return `<span class="result-idx">${idx+1}</span><span class="result-number">${numFmt}</span><span class="cell-carrier">${curChip}</span><span class="cell-orig">${origChip}</span><span class="cell-status">${badgeHTML(res.status)}</span>`;
 }
 
 function carrierChip(key, name) {
   const known = ['vivo','claro','tim','oi','nextel','algar','sercomtel','mvno'];
-  const cls = known.includes(key) ? key : 'unknown';
+  const cls   = known.includes(key) ? key : 'unknown';
   const label = name || CARRIER_DB._names[key] || 'Desconhecida';
   return `<span class="carrier-chip ${cls}"><span class="c-dot"></span>${label}</span>`;
 }
 
 function formatNumber(n) {
-  if (n && n.startsWith('55') && n.length === 13) {
-    return `+55 (${n.slice(2,4)}) ${n.slice(4,9)}-${n.slice(9)}`;
-  }
-  return n ? (n.startsWith('55') ? '+' + n : n) : '—';
+  if (n && n.startsWith('55') && n.length===13) return `+55 (${n.slice(2,4)}) ${n.slice(4,9)}-${n.slice(9)}`;
+  return n ? (n.startsWith('55') ? '+'+n : n) : '—';
 }
 
 function badgeHTML(status) {
@@ -1427,15 +736,12 @@ function filterResults(type, tab) {
   tab.classList.add('active');
   const list     = document.getElementById('resultsList');
   list.innerHTML = '';
-  const filtered = currentFilter === 'all' ? allResults : allResults.filter(r => r.status === currentFilter);
-  if (!filtered.length) {
-    list.innerHTML = `<div class="empty-state"><p>Nenhum resultado para este filtro.</p></div>`;
-    return;
-  }
-  filtered.forEach((res, i) => {
+  const filtered = currentFilter==='all' ? allResults : allResults.filter(r => r.status===currentFilter);
+  if (!filtered.length) { list.innerHTML = `<div class="empty-state"><p>Nenhum resultado para este filtro.</p></div>`; return; }
+  filtered.forEach((res,i) => {
     const div = document.createElement('div');
     div.className = 'result-item';
-    div.style.animationDelay = Math.min(i * 20, 200) + 'ms';
+    div.style.animationDelay = Math.min(i*20,200)+'ms';
     div.innerHTML = buildRowHTML(res, allResults.indexOf(res));
     list.appendChild(div);
   });
@@ -1443,18 +749,9 @@ function filterResults(type, tab) {
 
 function exportCSV() {
   const rows = [['#','Número','Operadora Atual','Operadora Original','Portado','Status','Nota']];
-  allResults.forEach((r, i) => {
-    rows.push([
-      i+1, r.number,
-      r.carrierName || '—',
-      r.ported ? (r.originalName || '—') : '—',
-      r.ported ? 'Sim' : 'Não',
-      r.status.toUpperCase(),
-      r.note || '',
-    ]);
-  });
+  allResults.forEach((r,i) => { rows.push([i+1,r.number,r.carrierName||'—',r.ported?(r.originalName||'—'):'—',r.ported?'Sim':'Não',r.status.toUpperCase(),r.note||'']); });
   const csv  = rows.map(r => r.join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
+  const blob = new Blob([csv],{type:'text/csv'});
   const a    = document.createElement('a');
   a.href     = URL.createObjectURL(blob);
   a.download = 'px7_checker_resultado.csv';
@@ -1462,7 +759,7 @@ function exportCSV() {
 }
 
 function copyActives() {
-  const actives = allResults.filter(r => r.status === 'active').map(r => r.number);
+  const actives = allResults.filter(r => r.status==='active').map(r => r.number);
   navigator.clipboard.writeText(actives.join('\n')).then(() => {
     const btn  = event.target.closest('.btn');
     const orig = btn.innerHTML;
@@ -1471,27 +768,45 @@ function copyActives() {
   });
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   DATORA TAB — admin/user mode
-   Admin:  URL contém ?admin=2007  → pode fazer upload do JSON e ver tabela completa
-   Usuário: sem o parâmetro        → só digita um número e vê se existe na base
-════════════════════════════════════════════════════════════════════ */
-
-const ADMIN_KEY = '2007';
-const isAdmin   = new URLSearchParams(window.location.search).get('admin') === ADMIN_KEY;
-
-/* Mostra a view correta ao carregar */
-window.addEventListener('DOMContentLoaded', () => {
-  if (isAdmin) {
-    document.getElementById('datora-admin-view').style.display = 'block';
-    setupAdminFileInputs();
-  } else {
-    document.getElementById('datora-user-view').style.display = 'block';
-    checkUserBaseAvailability();
+/* ═══════════════════════════════════════════════
+   LOCAL STORAGE — HELPERS
+═══════════════════════════════════════════════ */
+function saveBaseToLS(rows, meta) {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(rows));
+    localStorage.setItem(LS_META_KEY, JSON.stringify(meta));
+    return true;
+  } catch(e) {
+    return false;
   }
-});
+}
 
-/* ─── Estado compartilhado (base de dados) ────────────────────────────── */
+function loadBaseFromLS() {
+  try {
+    const raw  = localStorage.getItem(LS_KEY);
+    const meta = localStorage.getItem(LS_META_KEY);
+    if (!raw) return null;
+    return { rows: JSON.parse(raw), meta: meta ? JSON.parse(meta) : {} };
+  } catch(e) {
+    return null;
+  }
+}
+
+function clearBaseLS() {
+  if (!confirm('Tem certeza que deseja apagar a base de dados? Os usuários não conseguirão mais consultar até uma nova base ser carregada.')) return;
+  localStorage.removeItem(LS_KEY);
+  localStorage.removeItem(LS_META_KEY);
+  datoraRows     = [];
+  datoraFiltered = [];
+  datoraFields   = [];
+  document.getElementById('datoraResultsWrap').style.display = 'none';
+  document.getElementById('adminLoadedBanner').style.display = 'none';
+  document.getElementById('datoraError').classList.remove('visible');
+}
+
+/* ═══════════════════════════════════════════════
+   ADMIN — DATORA
+═══════════════════════════════════════════════ */
 let datoraRawData   = null;
 let datoraRows      = [];
 let datoraFields    = [];
@@ -1499,50 +814,55 @@ let datoraFiltered  = [];
 let datoraPage      = 1;
 const DATORA_PER_PAGE = 50;
 
-/* ══════════════════════════════════════════════════
-   ADMIN — upload, preview, tabela completa
-══════════════════════════════════════════════════ */
-
 function setupAdminFileInputs() {
   const datoraFileInput = document.getElementById('datoraFileInput');
   const datoraDrop      = document.getElementById('datoraDrop');
 
-  datoraFileInput.addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (file) handleDatoraFile(file);
-  });
-
-  datoraDrop.addEventListener('dragover', e => {
-    e.preventDefault();
-    datoraDrop.classList.add('drag-over');
-  });
-
+  datoraFileInput.addEventListener('change', e => { const file = e.target.files[0]; if (file) handleDatoraFile(file); });
+  datoraDrop.addEventListener('dragover', e => { e.preventDefault(); datoraDrop.classList.add('drag-over'); });
   datoraDrop.addEventListener('dragleave', () => datoraDrop.classList.remove('drag-over'));
-
   datoraDrop.addEventListener('drop', e => {
-    e.preventDefault();
-    datoraDrop.classList.remove('drag-over');
+    e.preventDefault(); datoraDrop.classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
     if (!file) return;
-    if (!file.name.endsWith('.json') && file.type !== 'application/json') {
-      showDatoraError('Apenas arquivos .json são aceitos.');
-      return;
-    }
+    if (!file.name.endsWith('.json') && file.type!=='application/json') { showDatoraError('Apenas arquivos .json são aceitos.'); return; }
     handleDatoraFile(file);
   });
 }
 
+/* Verifica se já existe base salva e mostra banner */
+function checkAdminLoadedBanner() {
+  const saved = loadBaseFromLS();
+  if (!saved) return;
+  const banner = document.getElementById('adminLoadedBanner');
+  const meta   = saved.meta || {};
+  document.getElementById('adminLoadedTitle').textContent = `Base ativa: ${saved.rows.length.toLocaleString()} registros`;
+  document.getElementById('adminLoadedMeta').textContent  = meta.savedAt
+    ? `Salva em ${meta.savedAt} — Arquivo: ${meta.fileName||'—'}`
+    : 'Base carregada anteriormente';
+  banner.style.display = 'flex';
+  // Também carrega os dados para a tabela admin
+  datoraRows     = saved.rows;
+  datoraFiltered = [...datoraRows];
+  const allKeys  = new Set();
+  datoraRows.slice(0,200).forEach(r => Object.keys(r).forEach(k => allKeys.add(k)));
+  datoraFields   = [...allKeys].slice(0,8);
+  document.getElementById('dTotalVal').textContent  = datoraRows.length;
+  document.getElementById('dFieldsVal').textContent = allKeys.size;
+  document.getElementById('datoraResultsWrap').style.display = 'block';
+  renderDatoraColHeader();
+  renderDatoraPage();
+}
+
 function handleDatoraFile(file) {
-  if (!file.name.endsWith('.json') && file.type !== 'application/json') {
-    showDatoraError('Apenas arquivos .json são aceitos. Envie um arquivo com extensão .json');
-    return;
+  if (!file.name.endsWith('.json') && file.type!=='application/json') {
+    showDatoraError('Apenas arquivos .json são aceitos. Envie um arquivo com extensão .json'); return;
   }
   const reader = new FileReader();
   reader.onload = ev => {
     try {
       const parsed = JSON.parse(ev.target.result);
       datoraRawData = parsed;
-
       const datoraDrop = document.getElementById('datoraDrop');
       datoraDrop.classList.add('has-file');
       document.getElementById('dropTitle').textContent    = 'Arquivo carregado com sucesso';
@@ -1550,275 +870,249 @@ function handleDatoraFile(file) {
       const fnEl = document.getElementById('dropFileName');
       fnEl.textContent = `📄 ${file.name} (${formatFileSize(file.size)})`;
       fnEl.style.display = 'inline-block';
+      fnEl.dataset.fileName = file.name;
       document.getElementById('datoraError').classList.remove('visible');
       renderJsonPreview(parsed);
       document.getElementById('datoraLoadBtn').disabled = false;
-    } catch {
-      showDatoraError('JSON inválido. Verifique se o arquivo está correto e tente novamente.');
-    }
+    } catch { showDatoraError('JSON inválido. Verifique se o arquivo está correto e tente novamente.'); }
   };
   reader.readAsText(file);
 }
 
 function formatFileSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / 1048576).toFixed(1) + ' MB';
+  if (bytes<1024) return bytes+' B';
+  if (bytes<1048576) return (bytes/1024).toFixed(1)+' KB';
+  return (bytes/1048576).toFixed(1)+' MB';
 }
 
 function showDatoraError(msg) {
   const el = document.getElementById('datoraError');
-  el.textContent = '⚠ ' + msg;
+  el.textContent = '⚠ '+msg;
   el.classList.add('visible');
 }
 
-/* ── JSON syntax highlight ── */
+/* JSON syntax highlight */
 function syntaxHL(val) {
-  if (typeof val === 'string')  return `<span class="js">"${escH(val)}"</span>`;
-  if (typeof val === 'number')  return `<span class="jn">${val}</span>`;
-  if (typeof val === 'boolean') return `<span class="jb">${val}</span>`;
-  if (val === null)             return `<span class="jnull">null</span>`;
+  if (typeof val==='string')  return `<span class="js">"${escH(val)}"</span>`;
+  if (typeof val==='number')  return `<span class="jn">${val}</span>`;
+  if (typeof val==='boolean') return `<span class="jb">${val}</span>`;
+  if (val===null)             return `<span class="jnull">null</span>`;
   return escH(String(val));
 }
 
-function escH(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function escH(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function renderJsonPreview(data) {
-  const wrap = document.getElementById('jsonPreviewWrap');
-  const tree = document.getElementById('jsonTree');
-  const statsEl = document.getElementById('jsonStats');
+  const wrap   = document.getElementById('jsonPreviewWrap');
+  const tree   = document.getElementById('jsonTree');
+  const statsEl= document.getElementById('jsonStats');
   wrap.classList.add('visible');
-
   const isArr = Array.isArray(data);
-  const len   = isArr ? data.length : (typeof data === 'object' && data ? Object.keys(data).length : 1);
-  const type  = isArr ? 'Array' : typeof data === 'object' ? 'Object' : typeof data;
-
-  statsEl.innerHTML = `
-    <span class="json-stat-chip highlight">${len} ${isArr ? 'itens' : 'chaves'}</span>
-    <span class="json-stat-chip">${type}</span>
-  `;
-
+  const len   = isArr ? data.length : (typeof data==='object'&&data ? Object.keys(data).length : 1);
+  const type  = isArr ? 'Array' : typeof data==='object' ? 'Object' : typeof data;
+  statsEl.innerHTML = `<span class="json-stat-chip highlight">${len} ${isArr?'itens':'chaves'}</span><span class="json-stat-chip">${type}</span>`;
   let html = '';
   if (isArr) {
-    const sample = data.slice(0, 8);
+    const sample = data.slice(0,8);
     html += `<span style="color:var(--muted)">[</span>\n`;
-    sample.forEach((item, i) => {
-      if (typeof item === 'object' && item) {
+    sample.forEach((item,i) => {
+      if (typeof item==='object'&&item) {
         html += `  <span style="color:var(--muted)">{</span>\n`;
-        Object.entries(item).slice(0, 8).forEach(([k, v]) => {
-          html += `    <span class="jk">"${escH(k)}"</span><span style="color:var(--muted)">: </span>${syntaxHL(v)}<span style="color:var(--muted)">,</span>\n`;
-        });
-        if (Object.keys(item).length > 8) html += `    <span style="color:var(--muted)">…</span>\n`;
-        html += `  <span style="color:var(--muted)">}${i < sample.length - 1 ? ',' : ''}</span>\n`;
-      } else {
-        html += `  ${syntaxHL(item)}${i < sample.length-1 ? '<span style="color:var(--muted)">,</span>' : ''}\n`;
-      }
+        Object.entries(item).slice(0,8).forEach(([k,v]) => { html += `    <span class="jk">"${escH(k)}"</span><span style="color:var(--muted)">: </span>${syntaxHL(v)}<span style="color:var(--muted)">,</span>\n`; });
+        if (Object.keys(item).length>8) html += `    <span style="color:var(--muted)">…</span>\n`;
+        html += `  <span style="color:var(--muted)">}${i<sample.length-1?',':''}</span>\n`;
+      } else { html += `  ${syntaxHL(item)}${i<sample.length-1?'<span style="color:var(--muted)">,</span>':''}\n`; }
     });
-    if (data.length > 8) html += `  <span style="color:var(--muted)">… mais ${data.length - 8} itens</span>\n`;
+    if (data.length>8) html += `  <span style="color:var(--muted)">… mais ${data.length-8} itens</span>\n`;
     html += `<span style="color:var(--muted)">]</span>`;
-  } else if (typeof data === 'object' && data) {
+  } else if (typeof data==='object'&&data) {
     html += `<span style="color:var(--muted)">{</span>\n`;
-    Object.entries(data).slice(0, 12).forEach(([k, v]) => {
-      html += `  <span class="jk">"${escH(k)}"</span><span style="color:var(--muted)">: </span>${syntaxHL(typeof v === 'object' ? '(objeto)' : v)}<span style="color:var(--muted)">,</span>\n`;
-    });
-    if (Object.keys(data).length > 12) html += `  <span style="color:var(--muted)">…</span>\n`;
+    Object.entries(data).slice(0,12).forEach(([k,v]) => { html += `  <span class="jk">"${escH(k)}"</span><span style="color:var(--muted)">: </span>${syntaxHL(typeof v==='object'?'(objeto)':v)}<span style="color:var(--muted)">,</span>\n`; });
+    if (Object.keys(data).length>12) html += `  <span style="color:var(--muted)">…</span>\n`;
     html += `<span style="color:var(--muted)">}</span>`;
-  } else {
-    html = syntaxHL(data);
-  }
+  } else { html = syntaxHL(data); }
   tree.innerHTML = html;
 }
 
-/* ── Normalize JSON → rows ── */
+/* Normalize JSON → rows */
 function normalizeToRows(data) {
   if (Array.isArray(data)) {
-    if (data.every(i => typeof i === 'object' && i !== null && !Array.isArray(i))) return data;
-    return data.map((v, i) => ({ '#': i + 1, valor: v }));
+    if (data.every(i => typeof i==='object'&&i!==null&&!Array.isArray(i))) return data;
+    return data.map((v,i) => ({ '#':i+1, valor:v }));
   }
-  if (typeof data === 'object' && data !== null) {
+  if (typeof data==='object'&&data!==null) {
     const vals = Object.values(data);
     if (vals.every(Array.isArray)) {
       const keys = Object.keys(data);
       const len  = Math.max(...vals.map(a => a.length));
-      return Array.from({ length: len }, (_, i) => {
-        const row = {};
-        keys.forEach(k => { row[k] = data[k][i] ?? ''; });
-        return row;
-      });
+      return Array.from({length:len},(_,i) => { const row={}; keys.forEach(k => { row[k]=data[k][i]??''; }); return row; });
     }
     return [data];
   }
-  return [{ valor: data }];
+  return [{ valor:data }];
 }
 
-/* ── Load admin table ── */
+/* ─── Salvar base no localStorage ─── */
 function loadDatoraData() {
   if (!datoraRawData) return;
-
   datoraRows     = normalizeToRows(datoraRawData);
   datoraFiltered = [...datoraRows];
   datoraPage     = 1;
 
   const allKeys = new Set();
-  datoraRows.slice(0, 200).forEach(r => Object.keys(r).forEach(k => allKeys.add(k)));
-  datoraFields = [...allKeys].slice(0, 8);
+  datoraRows.slice(0,200).forEach(r => Object.keys(r).forEach(k => allKeys.add(k)));
+  datoraFields = [...allKeys].slice(0,8);
+
+  /* Salvar no localStorage */
+  const fnEl    = document.getElementById('dropFileName');
+  const fileName = fnEl.dataset.fileName || 'arquivo.json';
+  const now      = new Date().toLocaleString('pt-BR');
+  const meta     = { savedAt:now, fileName, total:datoraRows.length };
+  const ok = saveBaseToLS(datoraRows, meta);
+
+  if (!ok) {
+    showDatoraError('Não foi possível salvar no localStorage (arquivo pode ser muito grande). Tente um JSON menor.');
+    return;
+  }
 
   document.getElementById('dTotalVal').textContent  = datoraRows.length;
   document.getElementById('dFieldsVal').textContent = allKeys.size;
   document.getElementById('datoraResultsWrap').style.display = 'block';
 
+  /* Atualiza banner */
+  const banner = document.getElementById('adminLoadedBanner');
+  document.getElementById('adminLoadedTitle').textContent = `Base ativa: ${datoraRows.length.toLocaleString()} registros`;
+  document.getElementById('adminLoadedMeta').textContent  = `Salva em ${now} — Arquivo: ${fileName}`;
+  banner.style.display = 'flex';
+
   renderDatoraColHeader();
   renderDatoraPage();
+
+  /* Feedback no botão */
+  const btn  = document.getElementById('datoraLoadBtn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Base Salva!`;
+  btn.disabled  = true;
+  setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2500);
 }
 
 function renderDatoraColHeader() {
   const el   = document.getElementById('datoraColHeader');
-  const cols = ['28px', ...datoraFields.map(() => '1fr')].join(' ');
+  const cols = ['28px',...datoraFields.map(() => '1fr')].join(' ');
   el.style.gridTemplateColumns = cols;
-  el.innerHTML = `<span class="col-label">#</span>` +
-    datoraFields.map(f => `<span class="col-label" title="${escH(f)}">${escH(truncate(f, 18))}</span>`).join('');
+  el.innerHTML = `<span class="col-label">#</span>`+datoraFields.map(f => `<span class="col-label" title="${escH(f)}">${escH(truncate(f,18))}</span>`).join('');
 }
 
 function renderDatoraPage() {
   const list  = document.getElementById('datoraList');
   const total = datoraFiltered.length;
-  const pages = Math.max(1, Math.ceil(total / DATORA_PER_PAGE));
-  datoraPage  = Math.min(datoraPage, pages);
-
-  const start = (datoraPage - 1) * DATORA_PER_PAGE;
-  const slice = datoraFiltered.slice(start, start + DATORA_PER_PAGE);
-
+  const pages = Math.max(1,Math.ceil(total/DATORA_PER_PAGE));
+  datoraPage  = Math.min(datoraPage,pages);
+  const start = (datoraPage-1)*DATORA_PER_PAGE;
+  const slice = datoraFiltered.slice(start,start+DATORA_PER_PAGE);
   document.getElementById('dShowingVal').textContent = total;
-
-  if (!slice.length) {
-    list.innerHTML = `<div class="empty-state"><p>Nenhum resultado encontrado.</p></div>`;
-    renderDatoraPagination(0, 1);
-    return;
-  }
-
-  const cols = ['28px', ...datoraFields.map(() => '1fr')].join(' ');
-  list.innerHTML = slice.map((row, i) => {
-    const globalIdx = start + i;
-    const cells = datoraFields.map(f => {
-      const val = row[f];
-      const str = val === undefined || val === null ? '' : String(val);
-      return `<span class="datora-cell" title="${escH(str)}">${escH(truncate(str, 30))}</span>`;
-    }).join('');
-    return `<div class="datora-row" style="grid-template-columns:${cols};animation-delay:${Math.min(i*15,200)}ms">
-      <span class="result-idx">${globalIdx + 1}</span>
-      ${cells}
-    </div>`;
+  if (!slice.length) { list.innerHTML = `<div class="empty-state"><p>Nenhum resultado encontrado.</p></div>`; renderDatoraPagination(0,1); return; }
+  const cols = ['28px',...datoraFields.map(() => '1fr')].join(' ');
+  list.innerHTML = slice.map((row,i) => {
+    const globalIdx = start+i;
+    const cells = datoraFields.map(f => { const val=row[f]; const str=val===undefined||val===null?'':String(val); return `<span class="datora-cell" title="${escH(str)}">${escH(truncate(str,30))}</span>`; }).join('');
+    return `<div class="datora-row" style="grid-template-columns:${cols};animation-delay:${Math.min(i*15,200)}ms"><span class="result-idx">${globalIdx+1}</span>${cells}</div>`;
   }).join('');
-
-  renderDatoraPagination(total, pages);
+  renderDatoraPagination(total,pages);
 }
 
-function renderDatoraPagination(total, pages) {
-  document.getElementById('pageInfo').textContent =
-    `${((datoraPage-1)*DATORA_PER_PAGE)+1}–${Math.min(datoraPage*DATORA_PER_PAGE, total)} de ${total}`;
-
+function renderDatoraPagination(total,pages) {
+  document.getElementById('pageInfo').textContent = `${((datoraPage-1)*DATORA_PER_PAGE)+1}–${Math.min(datoraPage*DATORA_PER_PAGE,total)} de ${total}`;
   const btns = document.getElementById('pageBtns');
   btns.innerHTML = '';
-
   const prev = document.createElement('button');
-  prev.className  = 'page-btn';
-  prev.textContent = '← Ant';
-  prev.disabled   = datoraPage <= 1;
-  prev.onclick    = () => { datoraPage--; renderDatoraPage(); };
+  prev.className='page-btn'; prev.textContent='← Ant'; prev.disabled=datoraPage<=1;
+  prev.onclick=() => { datoraPage--; renderDatoraPage(); };
   btns.appendChild(prev);
-
-  pageRange(datoraPage, pages, 5).forEach(p => {
-    const b = document.createElement('button');
-    b.className  = 'page-btn' + (p === datoraPage ? ' active' : '');
-    b.textContent = p;
-    b.onclick    = () => { datoraPage = p; renderDatoraPage(); };
+  pageRange(datoraPage,pages,5).forEach(p => {
+    const b=document.createElement('button');
+    b.className='page-btn'+(p===datoraPage?' active':''); b.textContent=p;
+    b.onclick=() => { datoraPage=p; renderDatoraPage(); };
     btns.appendChild(b);
   });
-
-  const next = document.createElement('button');
-  next.className  = 'page-btn';
-  next.textContent = 'Próx →';
-  next.disabled   = datoraPage >= pages;
-  next.onclick    = () => { datoraPage++; renderDatoraPage(); };
+  const next=document.createElement('button');
+  next.className='page-btn'; next.textContent='Próx →'; next.disabled=datoraPage>=pages;
+  next.onclick=() => { datoraPage++; renderDatoraPage(); };
   btns.appendChild(next);
 }
 
-function pageRange(current, total, size) {
-  let start = Math.max(1, current - Math.floor(size / 2));
-  let end   = Math.min(total, start + size - 1);
-  start = Math.max(1, end - size + 1);
-  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+function pageRange(current,total,size) {
+  let start=Math.max(1,current-Math.floor(size/2));
+  let end=Math.min(total,start+size-1);
+  start=Math.max(1,end-size+1);
+  return Array.from({length:end-start+1},(_,i)=>start+i);
 }
 
 function datoraSearchFilter() {
   const q = document.getElementById('datoraSearch').value.trim().toLowerCase();
-  datoraFiltered = q
-    ? datoraRows.filter(row =>
-        Object.values(row).some(v => String(v ?? '').toLowerCase().includes(q))
-      )
-    : [...datoraRows];
+  datoraFiltered = q ? datoraRows.filter(row => Object.values(row).some(v => String(v??'').toLowerCase().includes(q))) : [...datoraRows];
   datoraPage = 1;
   renderDatoraPage();
 }
 
 function clearDatora() {
-  datoraRawData  = null;
-  datoraRows     = [];
-  datoraFiltered = [];
-  datoraFields   = [];
-  datoraPage     = 1;
-
+  datoraRawData = null;
   const datoraDrop = document.getElementById('datoraDrop');
   datoraDrop.classList.remove('has-file');
   document.getElementById('dropTitle').textContent    = 'Selecione ou arraste o arquivo JSON';
   document.getElementById('dropSubtitle').innerHTML   = 'Apenas arquivos <strong>.json</strong> são aceitos<br>Clique para abrir o seletor de arquivos';
   document.getElementById('dropFileName').style.display = 'none';
   document.getElementById('dropFileName').textContent    = '';
-
   document.getElementById('jsonPreviewWrap').classList.remove('visible');
-  document.getElementById('jsonTree').innerHTML    = '';
-  document.getElementById('jsonStats').innerHTML   = '';
+  document.getElementById('jsonTree').innerHTML  = '';
+  document.getElementById('jsonStats').innerHTML = '';
   document.getElementById('datoraError').classList.remove('visible');
   document.getElementById('datoraLoadBtn').disabled = true;
-  document.getElementById('datoraResultsWrap').style.display = 'none';
-  document.getElementById('datoraSearch').value   = '';
   document.getElementById('datoraFileInput').value = '';
 }
 
 function exportDatoraCSV() {
   if (!datoraRows.length) return;
   const keys = datoraFields;
-  const rows = [keys, ...datoraFiltered.map(r => keys.map(k => JSON.stringify(r[k] ?? '')))];
+  const rows = [keys,...datoraFiltered.map(r => keys.map(k => JSON.stringify(r[k]??'')))];
   const csv  = rows.map(r => r.join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
+  const blob = new Blob([csv],{type:'text/csv'});
   const a    = document.createElement('a');
   a.href     = URL.createObjectURL(blob);
   a.download = 'datora_numeros.csv';
   a.click();
 }
 
-/* ══════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    USER — consulta simples de número
-══════════════════════════════════════════════════ */
+═══════════════════════════════════════════════ */
+
+/* Carrega a base do localStorage quando o usuário abre a aba */
+let userRows = [];
 
 function checkUserBaseAvailability() {
-  // Mostra aviso se base ainda não foi carregada
-  const hasBase = datoraRows.length > 0;
-  document.getElementById('userNoBaseMsg').style.display = hasBase ? 'none' : 'block';
+  const saved = loadBaseFromLS();
+  if (saved && saved.rows && saved.rows.length > 0) {
+    userRows = saved.rows;
+    document.getElementById('userNoBaseMsg').style.display = 'none';
+  } else {
+    userRows = [];
+    document.getElementById('userNoBaseMsg').style.display = 'block';
+  }
 }
 
 function onUserQueryInput() {
   const val = document.getElementById('userQueryInput').value.trim().replace(/\D/g,'');
   document.getElementById('userQueryBtn').disabled = val.length < 8;
-  // Oculta resultado anterior ao digitar
   document.getElementById('userQueryResult').style.display = 'none';
   document.getElementById('userQueryError').classList.remove('visible');
 }
 
 function consultarNumero() {
-  const raw = document.getElementById('userQueryInput').value.trim().replace(/\D/g,'');
+  /* Recarrega base do localStorage a cada consulta (garante dados frescos) */
+  checkUserBaseAvailability();
+
+  const raw   = document.getElementById('userQueryInput').value.trim().replace(/\D/g,'');
   const errEl = document.getElementById('userQueryError');
   const resEl = document.getElementById('userQueryResult');
 
@@ -1831,37 +1125,30 @@ function consultarNumero() {
     return;
   }
 
-  // Base não carregada
-  if (datoraRows.length === 0) {
+  if (userRows.length === 0) {
     errEl.textContent = '⚠ A base de dados ainda não foi carregada. Aguarde o administrador.';
     errEl.classList.add('visible');
     document.getElementById('userNoBaseMsg').style.display = 'block';
     return;
   }
 
-  // Busca: compara o número digitado com todos os valores de todas as colunas
-  // Normaliza removendo não-dígitos para comparação flexível
-  const found = datoraRows.filter(row =>
+  const found = userRows.filter(row =>
     Object.values(row).some(v => {
-      const norm = String(v ?? '').replace(/\D/g,'');
-      return norm === raw || norm.endsWith(raw) || raw.endsWith(norm);
+      const norm = String(v??'').replace(/\D/g,'');
+      return norm===raw || norm.endsWith(raw) || raw.endsWith(norm);
     })
   );
 
   if (found.length > 0) {
-    // Monta um card com os dados do primeiro resultado encontrado
-    // Exibe apenas os campos que o admin carregou, sem dados extras
     const row    = found[0];
     const fields = Object.keys(row);
     const rows   = fields.map(f => {
-      const val = row[f] ?? '—';
-      return `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
-          <span style="font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">${escH(f)}</span>
-          <span style="font-family:var(--mono);font-size:12px;color:var(--text)">${escH(String(val))}</span>
-        </div>`;
+      const val = row[f]??'—';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">${escH(f)}</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--text)">${escH(String(val))}</span>
+      </div>`;
     }).join('');
-
     resEl.innerHTML = `
       <div style="margin-top:16px;background:rgba(37,211,102,0.04);border:1px solid rgba(37,211,102,0.25);border-radius:12px;padding:20px 20px 12px;animation:fadeUp 0.3s ease both">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
@@ -1869,7 +1156,7 @@ function consultarNumero() {
             <span style="width:7px;height:7px;border-radius:50%;background:currentColor;animation:pulse 1.2s ease-in-out infinite"></span>
             ENCONTRADO
           </span>
-          ${found.length > 1 ? `<span style="font-family:var(--mono);font-size:10px;color:var(--muted)">${found.length} registros com este número</span>` : ''}
+          ${found.length>1?`<span style="font-family:var(--mono);font-size:10px;color:var(--muted)">${found.length} registros com este número</span>`:''}
         </div>
         ${rows}
       </div>`;
@@ -1877,19 +1164,15 @@ function consultarNumero() {
   } else {
     resEl.innerHTML = `
       <div style="margin-top:16px;background:rgba(255,77,77,0.04);border:1px solid rgba(255,77,77,0.2);border-radius:12px;padding:20px;animation:fadeUp 0.3s ease both;text-align:center">
-        <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:rgba(255,77,77,0.1);color:var(--red);border:1px solid rgba(255,77,77,0.25);font-family:var(--mono);font-size:11px;font-weight:700;margin-bottom:10px">
-          ✕ NÃO ENCONTRADO
-        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:rgba(255,77,77,0.1);color:var(--red);border:1px solid rgba(255,77,77,0.25);font-family:var(--mono);font-size:11px;font-weight:700;margin-bottom:10px">✕ NÃO ENCONTRADO</div>
         <p style="font-family:var(--mono);font-size:11px;color:var(--muted)">O número <strong style="color:var(--text)">${escH(raw)}</strong> não está cadastrado na base Datora.</p>
       </div>`;
     resEl.style.display = 'block';
   }
 }
 
-/* ── Shared helpers ── */
-function truncate(s, max) {
-  return String(s).length > max ? String(s).slice(0, max) + '…' : String(s);
-}
+/* ─── Shared helpers ─── */
+function truncate(s,max) { return String(s).length>max ? String(s).slice(0,max)+'…' : String(s); }
 </script>
 </body>
 </html>
