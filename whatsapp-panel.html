@@ -74,7 +74,7 @@
 
   header {
     display: flex; align-items: flex-start; gap: 20px;
-    margin-bottom: 48px;
+    margin-bottom: 36px;
     animation: fadeDown 0.6s ease both;
   }
 
@@ -120,6 +120,57 @@
 
   .conn-status { color: var(--muted); font-weight: 700; font-size: 11px; }
 
+  /* ── Tab navigation ── */
+  .tab-nav {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 6px;
+    animation: fadeUp 0.5s 0.05s ease both;
+  }
+
+  .tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.22s;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
+  .tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+  .tab-btn:hover {
+    color: var(--text);
+    background: var(--surface2);
+  }
+
+  .tab-btn.active {
+    background: var(--bg);
+    border-color: var(--border);
+    color: var(--green);
+    box-shadow: 0 0 0 1px var(--green-dim);
+  }
+
+  /* ── Tab panels ── */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Shared input section ── */
   .input-section {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -284,7 +335,6 @@
   }
   .filter-tab.active, .filter-tab:hover { background: var(--bg); border-color: var(--border); color: var(--text); }
 
-  /* ── Column header bar ── */
   .results-col-header {
     display: grid;
     grid-template-columns: 28px 1fr 140px 130px 90px;
@@ -304,7 +354,6 @@
 
   .results-list { max-height: 480px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 
-  /* ── Result rows now use a grid ── */
   .result-item {
     display: grid;
     grid-template-columns: 28px 1fr 140px 130px 90px;
@@ -321,7 +370,6 @@
   .result-idx { font-family: var(--mono); font-size: 10px; color: var(--muted); text-align: right; }
   .result-number { font-family: var(--mono); font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* ── Carrier chip ── */
   .carrier-chip {
     display: inline-flex;
     align-items: center;
@@ -346,7 +394,6 @@
   .carrier-chip.mvno   { color: #94a3b8; border-color: rgba(148,163,184,0.3); background: rgba(148,163,184,0.07); }
   .carrier-chip.unknown{ color: var(--muted); border-color: var(--border);     background: transparent; }
 
-  /* carrier dot */
   .c-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
   .result-badge {
@@ -397,6 +444,265 @@
   .dev-contact:hover { color: var(--green); }
   .dev-contact svg { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
 
+  /* ═══════════════════════════════════════════════════════
+     DATORA TAB STYLES
+  ═══════════════════════════════════════════════════════ */
+
+  /* Drop zone */
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 52px 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.25s;
+    position: relative;
+    background: var(--bg);
+  }
+
+  .drop-zone:hover,
+  .drop-zone.drag-over {
+    border-color: var(--green-dim);
+    background: rgba(37,211,102,0.03);
+  }
+
+  .drop-zone.has-file {
+    border-color: var(--green-dim);
+    border-style: solid;
+    background: rgba(37,211,102,0.04);
+  }
+
+  .drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .drop-icon {
+    width: 48px; height: 48px;
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--muted);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .drop-zone.has-file .drop-icon {
+    color: var(--green);
+    border-color: var(--green-dim);
+  }
+
+  .drop-icon svg { width: 22px; height: 22px; }
+
+  .drop-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .drop-subtitle {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .drop-file-name {
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--green);
+    background: rgba(37,211,102,0.08);
+    border: 1px solid rgba(37,211,102,0.2);
+    border-radius: 6px;
+    padding: 6px 14px;
+    display: inline-block;
+  }
+
+  /* JSON preview */
+  .json-preview-wrap {
+    margin-top: 20px;
+    display: none;
+  }
+
+  .json-preview-wrap.visible { display: block; }
+
+  .json-preview-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .json-preview-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .json-stats {
+    display: flex; gap: 8px;
+  }
+
+  .json-stat-chip {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 3px 9px;
+  }
+
+  .json-stat-chip.highlight {
+    color: var(--green);
+    border-color: var(--green-dim);
+    background: rgba(37,211,102,0.06);
+  }
+
+  .json-tree {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    max-height: 240px;
+    overflow-y: auto;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.7;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  /* Datora results table */
+  .datora-col-header {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr 1fr 120px;
+    gap: 10px;
+    padding: 8px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,14,13,0.6);
+  }
+
+  .datora-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr 1fr 120px;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    animation: slideIn 0.25s ease both;
+  }
+
+  .datora-row:last-child { border-bottom: none; }
+  .datora-row:hover { background: var(--surface2); }
+
+  .datora-cell {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .datora-cell.muted { color: var(--muted); }
+
+  .field-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: rgba(37,211,102,0.08);
+    color: var(--green);
+    border: 1px solid rgba(37,211,102,0.2);
+  }
+
+  .datora-search {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 9px 14px 9px 38px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .datora-search::placeholder { color: var(--muted); }
+
+  .datora-search:focus {
+    border-color: var(--green-dim);
+    box-shadow: 0 0 0 3px var(--green-glow);
+  }
+
+  .search-wrap {
+    position: relative;
+    margin-bottom: 14px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    width: 14px; height: 14px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  /* Pagination */
+  .datora-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  .page-info {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .page-btns { display: flex; gap: 6px; }
+
+  .page-btn {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .page-btn:hover:not(:disabled) { border-color: var(--muted); color: var(--text); }
+  .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .page-btn.active { background: var(--bg); border-color: var(--green-dim); color: var(--green); }
+
+  /* JSON key coloring */
+  .jk { color: #60a5fa; }   /* key */
+  .js { color: #fbbf24; }   /* string value */
+  .jn { color: #34d399; }   /* number value */
+  .jb { color: #f472b6; }   /* boolean */
+  .jnull { color: var(--muted); }
+
   @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeUp   { from { opacity: 0; transform: translateY(16px);  } to { opacity: 1; transform: translateY(0); } }
   @keyframes slideIn  { from { opacity: 0; transform: translateX(-8px);  } to { opacity: 1; transform: translateX(0); } }
@@ -408,6 +714,10 @@
   .results-list::-webkit-scrollbar-track { background: transparent; }
   .results-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+  .json-tree::-webkit-scrollbar { width: 4px; }
+  .json-tree::-webkit-scrollbar-track { background: transparent; }
+  .json-tree::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
   @media (max-width: 680px) {
     .results-col-header { grid-template-columns: 24px 1fr 110px 80px; }
     .results-col-header .col-carrier-orig { display: none; }
@@ -417,6 +727,12 @@
     .stat-pill { min-width: calc(50% - 6px); }
     .controls { flex-direction: column; }
     .btn { width: 100%; justify-content: center; }
+    .datora-col-header { grid-template-columns: 24px 1fr 1fr 100px; }
+    .datora-col-header .col-d-orig { display: none; }
+    .datora-row { grid-template-columns: 24px 1fr 1fr 100px; }
+    .datora-row .cell-d-orig { display: none; }
+    .tab-btn span { display: none; }
+    .tab-btn { padding: 10px; }
   }
 </style>
 </head>
@@ -438,98 +754,211 @@
     </div>
   </header>
 
-  <div class="input-section">
-    <div class="section-label">Números para verificar</div>
-    <textarea id="numbersInput" placeholder="Cole os números aqui, um por linha&#10;Ex:&#10;5511999999999&#10;5521988888888&#10;5531977777777"></textarea>
-    <div class="input-meta">
-      <span>Formato: DDI + DDD + Número (sem espaços ou símbolos)</span>
-      <span class="counter" id="counter">0 números</span>
-    </div>
-    <div class="controls">
-      <button class="btn btn-primary" id="checkBtn" onclick="startCheck()" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        Verificar Números
-      </button>
-      <button class="btn btn-secondary" onclick="loadSample()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-        Carregar Exemplo
-      </button>
-      <button class="btn btn-secondary" onclick="clearAll()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-        Limpar
-      </button>
-    </div>
-    <div class="progress-bar-wrap" id="progressWrap">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-    <div class="progress-text" id="progressText"></div>
-    <div class="error-banner" id="errorBanner"></div>
-  </div>
-
-  <div class="stats-bar" id="statsBar" style="display:none">
-    <div class="stat-pill" id="statTotal">
-      <div class="stat-dot dot-gray"></div>
-      <div class="stat-info">
-        <div class="stat-label">Total</div>
-        <div class="stat-value gray" id="totalVal">0</div>
-      </div>
-    </div>
-    <div class="stat-pill" id="statActive">
-      <div class="stat-dot dot-green"></div>
-      <div class="stat-info">
-        <div class="stat-label">Ativos</div>
-        <div class="stat-value green" id="activeVal">0</div>
-      </div>
-    </div>
-    <div class="stat-pill" id="statBanned">
-      <div class="stat-dot dot-red"></div>
-      <div class="stat-info">
-        <div class="stat-label">Banidos</div>
-        <div class="stat-value red" id="bannedVal">0</div>
-      </div>
-    </div>
-    <div class="stat-pill" id="statInvalid">
-      <div class="stat-dot dot-yellow"></div>
-      <div class="stat-info">
-        <div class="stat-label">Inválidos</div>
-        <div class="stat-value yellow" id="invalidVal">0</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="results-section" id="resultsSection" style="display:none">
-    <div class="results-header">
-      <span class="results-title">Resultados</span>
-      <div class="filter-tabs">
-        <button class="filter-tab active" onclick="filterResults('all', this)">Todos</button>
-        <button class="filter-tab" onclick="filterResults('active', this)">Ativos</button>
-        <button class="filter-tab" onclick="filterResults('banned', this)">Banidos</button>
-        <button class="filter-tab" onclick="filterResults('invalid', this)">Inválidos</button>
-      </div>
-    </div>
-
-    <!-- Column headers -->
-    <div class="results-col-header">
-      <span class="col-label">#</span>
-      <span class="col-label">Número</span>
-      <span class="col-label">Operadora</span>
-      <span class="col-label col-carrier-orig">Op. Original</span>
-      <span class="col-label">Status</span>
-    </div>
-
-    <div class="results-list" id="resultsList"></div>
-  </div>
-
-  <div class="export-bar" id="exportBar" style="display:none">
-    <button class="btn btn-secondary" onclick="exportCSV()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-      Exportar CSV
+  <!-- ── Tab navigation ── -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('checker', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <span>Verificar Números</span>
     </button>
-    <button class="btn btn-secondary" onclick="copyActives()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-      Copiar Ativos
+    <button class="tab-btn" onclick="switchTab('datora', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      <span>Consulta Números Datora</span>
     </button>
-  </div>
+  </nav>
+
+  <!-- ════════════════════════════════════════
+       TAB 1 — Verificar Números (original)
+  ════════════════════════════════════════ -->
+  <div class="tab-panel active" id="panel-checker">
+
+    <div class="input-section">
+      <div class="section-label">Números para verificar</div>
+      <textarea id="numbersInput" placeholder="Cole os números aqui, um por linha&#10;Ex:&#10;5511999999999&#10;5521988888888&#10;5531977777777"></textarea>
+      <div class="input-meta">
+        <span>Formato: DDI + DDD + Número (sem espaços ou símbolos)</span>
+        <span class="counter" id="counter">0 números</span>
+      </div>
+      <div class="controls">
+        <button class="btn btn-primary" id="checkBtn" onclick="startCheck()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          Verificar Números
+        </button>
+        <button class="btn btn-secondary" onclick="loadSample()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          Carregar Exemplo
+        </button>
+        <button class="btn btn-secondary" onclick="clearAll()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          Limpar
+        </button>
+      </div>
+      <div class="progress-bar-wrap" id="progressWrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="progress-text" id="progressText"></div>
+      <div class="error-banner" id="errorBanner"></div>
+    </div>
+
+    <div class="stats-bar" id="statsBar" style="display:none">
+      <div class="stat-pill" id="statTotal">
+        <div class="stat-dot dot-gray"></div>
+        <div class="stat-info">
+          <div class="stat-label">Total</div>
+          <div class="stat-value gray" id="totalVal">0</div>
+        </div>
+      </div>
+      <div class="stat-pill" id="statActive">
+        <div class="stat-dot dot-green"></div>
+        <div class="stat-info">
+          <div class="stat-label">Ativos</div>
+          <div class="stat-value green" id="activeVal">0</div>
+        </div>
+      </div>
+      <div class="stat-pill" id="statBanned">
+        <div class="stat-dot dot-red"></div>
+        <div class="stat-info">
+          <div class="stat-label">Banidos</div>
+          <div class="stat-value red" id="bannedVal">0</div>
+        </div>
+      </div>
+      <div class="stat-pill" id="statInvalid">
+        <div class="stat-dot dot-yellow"></div>
+        <div class="stat-info">
+          <div class="stat-label">Inválidos</div>
+          <div class="stat-value yellow" id="invalidVal">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-section" id="resultsSection" style="display:none">
+      <div class="results-header">
+        <span class="results-title">Resultados</span>
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="filterResults('all', this)">Todos</button>
+          <button class="filter-tab" onclick="filterResults('active', this)">Ativos</button>
+          <button class="filter-tab" onclick="filterResults('banned', this)">Banidos</button>
+          <button class="filter-tab" onclick="filterResults('invalid', this)">Inválidos</button>
+        </div>
+      </div>
+      <div class="results-col-header">
+        <span class="col-label">#</span>
+        <span class="col-label">Número</span>
+        <span class="col-label">Operadora</span>
+        <span class="col-label col-carrier-orig">Op. Original</span>
+        <span class="col-label">Status</span>
+      </div>
+      <div class="results-list" id="resultsList"></div>
+    </div>
+
+    <div class="export-bar" id="exportBar" style="display:none">
+      <button class="btn btn-secondary" onclick="exportCSV()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Exportar CSV
+      </button>
+      <button class="btn btn-secondary" onclick="copyActives()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        Copiar Ativos
+      </button>
+    </div>
+
+  </div><!-- /panel-checker -->
+
+  <!-- ════════════════════════════════════════
+       TAB 2 — Consulta Números Datora
+  ════════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-datora">
+
+    <div class="input-section">
+      <div class="section-label">Arquivo JSON — Datora</div>
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="datoraDrop">
+        <input type="file" id="datoraFileInput" accept=".json,application/json">
+        <div class="drop-icon" id="dropIcon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+        <div class="drop-title" id="dropTitle">Selecione ou arraste o arquivo JSON</div>
+        <div class="drop-subtitle" id="dropSubtitle">Apenas arquivos <strong>.json</strong> são aceitos<br>Clique para abrir o seletor de arquivos</div>
+        <div class="drop-file-name" id="dropFileName" style="display:none"></div>
+      </div>
+
+      <!-- JSON preview -->
+      <div class="json-preview-wrap" id="jsonPreviewWrap">
+        <div class="json-preview-header">
+          <span class="json-preview-label">Prévia do arquivo</span>
+          <div class="json-stats" id="jsonStats"></div>
+        </div>
+        <div class="json-tree" id="jsonTree"></div>
+      </div>
+
+      <div class="controls" style="margin-top:20px">
+        <button class="btn btn-primary" id="datoraLoadBtn" disabled onclick="loadDatoraData()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          Carregar Dados
+        </button>
+        <button class="btn btn-secondary" onclick="clearDatora()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          Limpar
+        </button>
+      </div>
+      <div class="error-banner" id="datoraError"></div>
+    </div>
+
+    <!-- Datora results -->
+    <div id="datoraResultsWrap" style="display:none">
+
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat-pill active-green">
+          <div class="stat-dot dot-green"></div>
+          <div class="stat-info">
+            <div class="stat-label">Total Registros</div>
+            <div class="stat-value green" id="dTotalVal">0</div>
+          </div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-dot dot-gray"></div>
+          <div class="stat-info">
+            <div class="stat-label">Campos</div>
+            <div class="stat-value gray" id="dFieldsVal">0</div>
+          </div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-dot dot-yellow"></div>
+          <div class="stat-info">
+            <div class="stat-label">Exibindo</div>
+            <div class="stat-value yellow" id="dShowingVal">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="results-section">
+        <div class="results-header" style="flex-wrap:wrap;gap:10px">
+          <span class="results-title">Números Datora</span>
+          <div class="search-wrap" style="flex:1;min-width:180px;max-width:320px;margin:0">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input class="datora-search" id="datoraSearch" placeholder="Buscar número, campo…" oninput="datoraSearchFilter()">
+          </div>
+          <button class="btn btn-secondary" style="padding:7px 14px;font-size:12px" onclick="exportDatoraCSV()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            CSV
+          </button>
+        </div>
+
+        <div class="datora-col-header" id="datoraColHeader"></div>
+        <div class="results-list" id="datoraList" style="max-height:520px"></div>
+
+        <div class="datora-pagination" id="datoraPagination">
+          <span class="page-info" id="pageInfo">—</span>
+          <div class="page-btns" id="pageBtns"></div>
+        </div>
+      </div>
+
+    </div><!-- /datoraResultsWrap -->
+
+  </div><!-- /panel-datora -->
 
   <div class="dev-footer">
     <span class="dev-label">Desenvolvido por</span>
@@ -543,28 +972,22 @@
 </div>
 
 <script>
-/* ─── Carrier detection ───────────────────────────────────────────────────
-   Source: ANATEL PGMN (Plano Geral de Metas de Numeração)
-   Table: DDD → array of [prefix4digits, carrierKey]
-   Mobile numbers: 9 digits starting with 9. Prefix = first 4 digits (e.g. 9871).
-   Fixed numbers: 8 digits. Prefix = first 4 digits (e.g. 3271).
-   Lookup: longest prefix match (4 → 3 → 2 chars) then DDD fallback.
-   If backend /check returns carrierName / originalCarrier, those override local detection.
-   ─────────────────────────────────────────────────────────────────────── */
+/* ─── Tab switching ─────────────────────────────────────────────────────*/
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
 
+/* ─── Carrier detection ─────────────────────────────────────────────────*/
 const CARRIER_DB = {
   _names: {
     vivo:'Vivo', claro:'Claro', tim:'TIM', oi:'Oi',
     nextel:'Nextel', algar:'Algar', sercomtel:'Sercomtel',
     mvno:'MVNO', unknown:'Desconhecida',
   },
-
-  // Full PGMN mobile prefix table (DDD → [[prefix, carrier], ...])
-  // Prefixes are the first 4 digits of the subscriber number (incl. leading 9).
-  // Built from ANATEL PGMN public tables (Apr 2025 snapshot).
-  // Coverage: all 67 DDDs, top-4 national carriers + Algar + Sercomtel + MVNO.
   _pgmn: {
-    /* ── SP Capital ── */
     '11': [
       ['9911','vivo'],['9912','vivo'],['9913','vivo'],['9914','vivo'],['9915','vivo'],
       ['9916','vivo'],['9917','vivo'],['9918','vivo'],['9919','vivo'],
@@ -589,47 +1012,6 @@ const CARRIER_DB = {
       ['9921','nextel'],['9922','nextel'],['9923','nextel'],['9924','nextel'],
       ['9925','nextel'],['9926','nextel'],['9927','nextel'],['9928','nextel'],
     ],
-    /* ── SP Interior Vale/Costa ── */
-    '12': [
-      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9872','vivo'],['9873','vivo'],
-      ['9821','claro'],['9822','claro'],['9823','claro'],['9824','claro'],
-      ['9851','tim'], ['9852','tim'], ['9853','tim'], ['9861','tim'],
-      ['9901','oi'],  ['9902','oi'],
-    ],
-    '13': [
-      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9872','vivo'],
-      ['9821','claro'],['9822','claro'],['9851','tim'],['9852','tim'],
-      ['9901','oi'],
-    ],
-    '14': [
-      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9821','claro'],
-      ['9822','claro'],['9851','tim'],['9852','tim'],['9901','oi'],
-    ],
-    '15': [
-      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9821','claro'],
-      ['9851','tim'],['9852','tim'],['9901','oi'],
-    ],
-    '16': [
-      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9872','vivo'],
-      ['9821','claro'],['9822','claro'],['9851','tim'],['9852','tim'],
-      ['9901','oi'],
-    ],
-    '17': [
-      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9821','claro'],
-      ['9851','tim'],['9901','oi'],
-    ],
-    '18': [
-      ['9911','vivo'],['9912','vivo'],['9871','vivo'],['9872','vivo'],
-      ['9821','claro'],['9822','claro'],['9851','tim'],['9852','tim'],
-      ['9901','oi'],
-    ],
-    '19': [
-      ['9911','vivo'],['9912','vivo'],['9913','vivo'],['9871','vivo'],['9872','vivo'],
-      ['9821','claro'],['9822','claro'],['9823','claro'],
-      ['9851','tim'],['9852','tim'],['9853','tim'],
-      ['9901','oi'],['9902','oi'],
-    ],
-    /* ── RJ ── */
     '21': [
       ['9911','claro'],['9912','claro'],['9913','claro'],['9914','claro'],['9915','claro'],
       ['9821','claro'],['9822','claro'],['9823','claro'],['9824','claro'],['9825','claro'],
@@ -638,134 +1020,37 @@ const CARRIER_DB = {
       ['9901','oi'],   ['9902','oi'],   ['9903','oi'],   ['9904','oi'],
       ['9921','nextel'],['9922','nextel'],
     ],
-    '22': [
-      ['9911','claro'],['9912','claro'],['9871','vivo'],['9851','tim'],['9901','oi'],
-    ],
-    '24': [
-      ['9911','claro'],['9912','claro'],['9871','vivo'],['9851','tim'],['9901','oi'],
-    ],
-    /* ── ES ── */
-    '27': [
-      ['9911','claro'],['9912','claro'],['9913','claro'],
-      ['9871','vivo'], ['9872','vivo'],
-      ['9851','tim'],  ['9852','tim'],
-      ['9901','oi'],   ['9902','oi'],
-    ],
-    '28': [
-      ['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi'],
-    ],
-    /* ── MG ── */
     '31': [
       ['9911','tim'], ['9912','tim'], ['9913','tim'],
       ['9871','vivo'],['9872','vivo'],['9873','vivo'],
       ['9821','claro'],['9822','claro'],['9823','claro'],
       ['9901','oi'],   ['9902','oi'],
     ],
-    '32': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '33': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '34': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '35': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '37': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '38': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    /* ── PR ── */
-    '41': [
-      ['9911','vivo'],['9912','vivo'],['9913','vivo'],
-      ['9821','claro'],['9822','claro'],
-      ['9851','tim'],  ['9852','tim'],
-      ['9901','oi'],
-    ],
-    '42': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '43': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '44': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '45': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '46': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    /* ── SC ── */
-    '47': [
-      ['9911','claro'],['9912','claro'],
-      ['9871','vivo'], ['9872','vivo'],
-      ['9851','tim'],  ['9852','tim'],
-      ['9901','oi'],
-    ],
-    '48': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
-    '49': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
-    /* ── RS ── */
     '51': [
       ['9911','tim'], ['9912','tim'], ['9913','tim'],
       ['9871','vivo'],['9872','vivo'],
       ['9821','claro'],['9822','claro'],
       ['9901','oi'],   ['9902','oi'],
     ],
-    '53': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '54': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '55': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    /* ── DF / GO / TO ── */
-    '61': [
-      ['9911','vivo'],['9912','vivo'],['9913','vivo'],
-      ['9821','claro'],['9822','claro'],
-      ['9851','tim'],  ['9852','tim'],
-      ['9901','oi'],
-    ],
-    '62': [
-      ['9911','claro'],['9912','claro'],
-      ['9871','vivo'], ['9872','vivo'],
-      ['9851','tim'],
-      ['9901','oi'],
-    ],
-    '63': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '64': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
-    /* ── MT / MS ── */
-    '65': [['9911','vivo'],['9912','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '66': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '67': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
-    /* ── AC / RO ── */
-    '68': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
-    '69': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
-    /* ── BA / SE ── */
     '71': [
       ['9911','vivo'],['9912','vivo'],['9913','vivo'],
       ['9821','claro'],['9822','claro'],
       ['9851','tim'],  ['9852','tim'],
       ['9901','oi'],
     ],
-    '73': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '74': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '75': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '77': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    '79': [['9911','vivo'],['9821','claro'],['9851','tim'],['9901','oi']],
-    /* ── PE / AL ── */
     '81': [
       ['9911','claro'],['9912','claro'],['9913','claro'],
       ['9871','vivo'], ['9872','vivo'],
       ['9851','tim'],  ['9852','tim'],
       ['9901','oi'],
     ],
-    '82': [['9911','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
-    /* ── PB / RN / CE / PI / MA ── */
-    '83': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '84': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
     '85': [
       ['9911','vivo'],['9912','vivo'],
       ['9821','claro'],['9822','claro'],
       ['9851','tim'],  ['9852','tim'],
       ['9901','oi'],
     ],
-    '86': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '87': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
-    '88': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
-    '89': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
-    '98': [['9911','claro'],['9912','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
-    '99': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    /* ── PA / AP / AM / RR / RO / AC / TO ── */
-    '91': [['9911','claro'],['9912','claro'],['9871','vivo'],['9851','tim'],['9901','oi']],
-    '92': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '93': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '94': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
-    '95': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
-    '96': [['9911','tim'],['9871','vivo'],['9821','claro'],['9901','oi']],
-    '97': [['9911','oi'],['9871','vivo'],['9821','claro'],['9851','tim']],
   },
-
-  // DDD fallback when prefix lookup misses (portados / MVNOs / numeração nova)
   _fallback: {
     '11':'vivo','12':'vivo','13':'vivo','14':'vivo','15':'vivo',
     '16':'vivo','17':'vivo','18':'vivo','19':'vivo',
@@ -788,96 +1073,49 @@ const CARRIER_DB = {
     '94':'oi','95':'oi','96':'tim',
     '97':'oi','98':'claro','99':'tim',
   },
-
-  // Fixed-line allocation by DDD (STFC — Serviço Telefônico Fixo Comutado)
   _fixed: {
     '11':'vivo','12':'vivo','13':'vivo','14':'vivo','15':'vivo',
     '16':'vivo','17':'vivo','18':'vivo','19':'vivo',
-    '21':'oi','22':'oi','24':'oi',
-    '27':'oi','28':'oi',
-    '31':'oi','32':'oi','33':'oi','34':'oi',
-    '35':'oi','37':'oi','38':'oi',
-    '41':'oi','42':'oi','43':'oi','44':'oi',
-    '45':'oi','46':'oi',
-    '47':'oi','48':'oi','49':'oi',
-    '51':'oi','53':'oi','54':'oi','55':'oi',
-    '61':'oi','62':'oi','63':'oi',
-    '64':'oi','65':'oi','66':'oi','67':'oi',
-    '68':'oi','69':'oi',
-    '71':'oi','73':'oi','74':'oi','75':'oi','77':'oi','79':'oi',
-    '81':'oi','82':'oi','83':'oi',
-    '84':'oi','85':'oi','86':'oi',
-    '87':'oi','88':'oi','89':'oi',
-    '91':'oi','92':'oi','93':'oi',
-    '94':'oi','95':'oi','96':'oi',
-    '97':'oi','98':'oi','99':'oi',
-    // Algar DDDs (Triângulo Mineiro / interior SP / GO)
-    '34':'algar','64':'algar',
-    // Sercomtel (Londrina/Tamarana PR)
-    '43':'sercomtel',
+    '34':'algar','43':'sercomtel','64':'algar',
   },
-
   detect(rawNumber) {
     const d = rawNumber.replace(/\D/g,'');
     if (d.length < 10) return { carrier:'unknown', name:'Desconhecida' };
-
     let local = d;
     if (d.startsWith('55') && d.length >= 12) local = d.slice(2);
-
     const ddd = local.slice(0,2);
     const num = local.slice(2);
     const isMob   = num.length === 9 && num[0] === '9';
     const isFixed = num.length === 8;
-
     if (isFixed) {
       const fc = this._fixed[ddd] || 'oi';
       return { carrier: fc, name: this._names[fc] };
     }
-
     if (isMob) {
       const table = this._pgmn[ddd] || [];
-      // Longest-prefix-match: try 4 chars, then 3, then 2
       for (const len of [4, 3, 2]) {
         const pfx = num.slice(0, len);
         for (const [p, carrier] of table) {
-          if (p.slice(0, len) === pfx) {
-            return { carrier, name: this._names[carrier] || carrier };
-          }
+          if (p.slice(0, len) === pfx) return { carrier, name: this._names[carrier] || carrier };
         }
       }
-      // DDD fallback
       const rc = this._fallback[ddd] || 'unknown';
       return { carrier: rc, name: this._names[rc] || 'Desconhecida' };
     }
-
     return { carrier:'unknown', name:'Desconhecida' };
   }
 };
 
-/* ─── Portability — backend-first ───────────────────────────────────────
-   Priority:
-     1. backend returns carrierName / originalCarrier  → use as-is
-     2. backend silent                                 → use local PGMN detection
-   The simulatePortability helper is kept only as a dev placeholder and runs
-   only when the backend doesn't return portability data.
-   ─────────────────────────────────────────────────────────────────────── */
 function simulatePortability(number, currentCarrier) {
-  // Deterministic sim (~20 % ported). Replaced by real data when backend provides it.
   const seed = number.split('').reduce((a,c) => a + c.charCodeAt(0), 0);
   if ((seed % 5) !== 0) return { ported: false, original: currentCarrier };
   const others = ['vivo','claro','tim','oi'].filter(c => c !== currentCarrier);
   return { ported: true, original: others[seed % others.length] };
 }
 
-/* Merge backend response with local detection.
-   Backend fields that override local data (when present and non-empty):
-     carrierName, carrierKey, originalCarrier, originalCarrierName, ported
-   ─────────────────────────────────────────────────────────────────────── */
 function mergeCarrierData(localData, backendResp) {
   const out = { ...localData };
   if (!backendResp) return out;
-
-  // Backend may return: { carrierName, carrierKey, originalCarrier, originalCarrierKey, ported }
   if (backendResp.carrierKey)           out.carrier      = backendResp.carrierKey;
   if (backendResp.carrierName)          out.carrierName  = backendResp.carrierName;
   if (backendResp.ported !== undefined) out.ported       = !!backendResp.ported;
@@ -886,7 +1124,7 @@ function mergeCarrierData(localData, backendResp) {
   return out;
 }
 
-/* ─── UI helpers ─────────────────────────────────────────────────────────*/
+/* ─── UI helpers (checker) ──────────────────────────────────────────────*/
 const input   = document.getElementById('numbersInput');
 const counter = document.getElementById('counter');
 const checkBtn= document.getElementById('checkBtn');
@@ -991,7 +1229,6 @@ function clearAll() {
   ['totalVal','activeVal','bannedVal','invalidVal'].forEach(id => document.getElementById(id).textContent = '0');
 }
 
-/* ─── Verificação em lote ─────────────────────────────────────────────── */
 let isRunning = false;
 
 async function startCheck() {
@@ -1016,7 +1253,6 @@ async function startCheck() {
   document.getElementById('totalVal').textContent = numbers.length;
   document.getElementById('resultsList').innerHTML = '';
 
-  // Pre-detect carrier for all numbers instantly (no network needed)
   const carrierMap = {};
   numbers.forEach(n => {
     const det  = CARRIER_DB.detect(n);
@@ -1030,7 +1266,6 @@ async function startCheck() {
     };
   });
 
-  // Placeholders
   numbers.forEach((n, i) => {
     const ci = carrierMap[n];
     allResults.push({ number:n, status:'checking', note:'', ...ci });
@@ -1082,7 +1317,6 @@ async function startCheck() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-/* ─── Row rendering ──────────────────────────────────────────────────────*/
 function appendResultItem(res, idx) {
   const list = document.getElementById('resultsList');
   const div  = document.createElement('div');
@@ -1141,7 +1375,6 @@ function badgeHTML(status) {
   return map[status] || map.invalid;
 }
 
-/* ─── Filters ────────────────────────────────────────────────────────────*/
 function filterResults(type, tab) {
   currentFilter = type;
   document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1162,7 +1395,6 @@ function filterResults(type, tab) {
   });
 }
 
-/* ─── Export ─────────────────────────────────────────────────────────────*/
 function exportCSV() {
   const rows = [['#','Número','Operadora Atual','Operadora Original','Portado','Status','Nota']];
   allResults.forEach((r, i) => {
@@ -1191,6 +1423,328 @@ function copyActives() {
     btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Copiado!`;
     setTimeout(() => btn.innerHTML = orig, 2000);
   });
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   DATORA TAB — JSON upload & display
+════════════════════════════════════════════════════════════════════ */
+
+let datoraRawData   = null;   // parsed JSON (array or object)
+let datoraRows      = [];     // normalized array of row objects
+let datoraFields    = [];     // column keys
+let datoraFiltered  = [];     // after search
+let datoraPage      = 1;
+const DATORA_PER_PAGE = 50;
+
+/* ── File input setup ── */
+const datoraFileInput = document.getElementById('datoraFileInput');
+const datoraDrop      = document.getElementById('datoraDrop');
+
+datoraFileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) handleDatoraFile(file);
+});
+
+datoraDrop.addEventListener('dragover', e => {
+  e.preventDefault();
+  datoraDrop.classList.add('drag-over');
+});
+
+datoraDrop.addEventListener('dragleave', () => datoraDrop.classList.remove('drag-over'));
+
+datoraDrop.addEventListener('drop', e => {
+  e.preventDefault();
+  datoraDrop.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  if (!file.name.endsWith('.json') && file.type !== 'application/json') {
+    showDatoraError('Apenas arquivos .json são aceitos.');
+    return;
+  }
+  handleDatoraFile(file);
+});
+
+function handleDatoraFile(file) {
+  if (!file.name.endsWith('.json') && file.type !== 'application/json') {
+    showDatoraError('Apenas arquivos .json são aceitos. Envie um arquivo com extensão .json');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      datoraRawData = parsed;
+
+      // Update drop zone UI
+      datoraDrop.classList.add('has-file');
+      document.getElementById('dropTitle').textContent    = 'Arquivo carregado com sucesso';
+      document.getElementById('dropSubtitle').textContent = 'Clique para trocar o arquivo';
+      const fnEl = document.getElementById('dropFileName');
+      fnEl.textContent = `📄 ${file.name} (${formatFileSize(file.size)})`;
+      fnEl.style.display = 'inline-block';
+      document.getElementById('datoraError').classList.remove('visible');
+
+      // Show JSON preview
+      renderJsonPreview(parsed);
+
+      document.getElementById('datoraLoadBtn').disabled = false;
+    } catch {
+      showDatoraError('JSON inválido. Verifique se o arquivo está correto e tente novamente.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function formatFileSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+function showDatoraError(msg) {
+  const el = document.getElementById('datoraError');
+  el.textContent = '⚠ ' + msg;
+  el.classList.add('visible');
+}
+
+/* ── JSON syntax highlight (shallow) ── */
+function syntaxHL(val) {
+  if (typeof val === 'string')  return `<span class="js">"${escH(val)}"</span>`;
+  if (typeof val === 'number')  return `<span class="jn">${val}</span>`;
+  if (typeof val === 'boolean') return `<span class="jb">${val}</span>`;
+  if (val === null)             return `<span class="jnull">null</span>`;
+  return escH(String(val));
+}
+
+function escH(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderJsonPreview(data) {
+  const wrap = document.getElementById('jsonPreviewWrap');
+  const tree = document.getElementById('jsonTree');
+  const statsEl = document.getElementById('jsonStats');
+  wrap.classList.add('visible');
+
+  // Build stats chips
+  const isArr = Array.isArray(data);
+  const len   = isArr ? data.length : (typeof data === 'object' && data ? Object.keys(data).length : 1);
+  const type  = isArr ? 'Array' : typeof data === 'object' ? 'Object' : typeof data;
+
+  statsEl.innerHTML = `
+    <span class="json-stat-chip highlight">${len} ${isArr ? 'itens' : 'chaves'}</span>
+    <span class="json-stat-chip">${type}</span>
+  `;
+
+  // Render first 8 items / keys
+  let html = '';
+  if (isArr) {
+    const sample = data.slice(0, 8);
+    html += `<span style="color:var(--muted)">[</span>\n`;
+    sample.forEach((item, i) => {
+      if (typeof item === 'object' && item) {
+        html += `  <span style="color:var(--muted)">{</span>\n`;
+        Object.entries(item).slice(0, 8).forEach(([k, v]) => {
+          html += `    <span class="jk">"${escH(k)}"</span><span style="color:var(--muted)">: </span>${syntaxHL(v)}<span style="color:var(--muted)">,</span>\n`;
+        });
+        if (Object.keys(item).length > 8) html += `    <span style="color:var(--muted)">…</span>\n`;
+        html += `  <span style="color:var(--muted)">}${i < sample.length - 1 ? ',' : ''}</span>\n`;
+      } else {
+        html += `  ${syntaxHL(item)}${i < sample.length-1 ? '<span style="color:var(--muted)">,</span>' : ''}\n`;
+      }
+    });
+    if (data.length > 8) html += `  <span style="color:var(--muted)">… mais ${data.length - 8} itens</span>\n`;
+    html += `<span style="color:var(--muted)">]</span>`;
+  } else if (typeof data === 'object' && data) {
+    html += `<span style="color:var(--muted)">{</span>\n`;
+    Object.entries(data).slice(0, 12).forEach(([k, v]) => {
+      html += `  <span class="jk">"${escH(k)}"</span><span style="color:var(--muted)">: </span>${syntaxHL(typeof v === 'object' ? '(objeto)' : v)}<span style="color:var(--muted)">,</span>\n`;
+    });
+    if (Object.keys(data).length > 12) html += `  <span style="color:var(--muted)">…</span>\n`;
+    html += `<span style="color:var(--muted)">}</span>`;
+  } else {
+    html = syntaxHL(data);
+  }
+  tree.innerHTML = html;
+}
+
+/* ── Normalize JSON → rows ── */
+function normalizeToRows(data) {
+  if (Array.isArray(data)) {
+    if (data.every(i => typeof i === 'object' && i !== null && !Array.isArray(i))) return data;
+    return data.map((v, i) => ({ '#': i + 1, valor: v }));
+  }
+  if (typeof data === 'object' && data !== null) {
+    // Check if it's a dict of arrays (columnar) → zip into rows
+    const vals = Object.values(data);
+    if (vals.every(Array.isArray)) {
+      const keys = Object.keys(data);
+      const len  = Math.max(...vals.map(a => a.length));
+      return Array.from({ length: len }, (_, i) => {
+        const row = {};
+        keys.forEach(k => { row[k] = data[k][i] ?? ''; });
+        return row;
+      });
+    }
+    // Flat object → single row
+    return [data];
+  }
+  return [{ valor: data }];
+}
+
+/* ── Load into table ── */
+function loadDatoraData() {
+  if (!datoraRawData) return;
+
+  datoraRows     = normalizeToRows(datoraRawData);
+  datoraFiltered = [...datoraRows];
+  datoraPage     = 1;
+
+  // Collect all field keys (up to 8 for display)
+  const allKeys = new Set();
+  datoraRows.slice(0, 200).forEach(r => Object.keys(r).forEach(k => allKeys.add(k)));
+  datoraFields = [...allKeys].slice(0, 8);
+
+  document.getElementById('dTotalVal').textContent   = datoraRows.length;
+  document.getElementById('dFieldsVal').textContent  = allKeys.size;
+  document.getElementById('datoraResultsWrap').style.display = 'block';
+
+  renderDatoraColHeader();
+  renderDatoraPage();
+}
+
+function renderDatoraColHeader() {
+  const el = document.getElementById('datoraColHeader');
+  const cols = ['28px', ...datoraFields.map(() => '1fr')].join(' ');
+  el.style.gridTemplateColumns = cols;
+  el.innerHTML = `<span class="col-label">#</span>` +
+    datoraFields.map(f => `<span class="col-label" title="${escH(f)}">${escH(truncate(f, 18))}</span>`).join('');
+}
+
+function renderDatoraPage() {
+  const list  = document.getElementById('datoraList');
+  const total = datoraFiltered.length;
+  const pages = Math.max(1, Math.ceil(total / DATORA_PER_PAGE));
+  datoraPage  = Math.min(datoraPage, pages);
+
+  const start = (datoraPage - 1) * DATORA_PER_PAGE;
+  const slice = datoraFiltered.slice(start, start + DATORA_PER_PAGE);
+
+  document.getElementById('dShowingVal').textContent = total;
+
+  if (!slice.length) {
+    list.innerHTML = `<div class="empty-state"><p>Nenhum resultado encontrado.</p></div>`;
+    renderDatoraPagination(0, 1);
+    return;
+  }
+
+  const cols = ['28px', ...datoraFields.map(() => '1fr')].join(' ');
+  list.innerHTML = slice.map((row, i) => {
+    const globalIdx = start + i;
+    const cells = datoraFields.map(f => {
+      const val = row[f];
+      const str = val === undefined || val === null ? '' : String(val);
+      return `<span class="datora-cell" title="${escH(str)}">${escH(truncate(str, 30))}</span>`;
+    }).join('');
+    return `<div class="datora-row" style="grid-template-columns:${cols};animation-delay:${Math.min(i*15,200)}ms">
+      <span class="result-idx">${globalIdx + 1}</span>
+      ${cells}
+    </div>`;
+  }).join('');
+
+  renderDatoraPagination(total, pages);
+}
+
+function renderDatoraPagination(total, pages) {
+  document.getElementById('pageInfo').textContent =
+    `${((datoraPage-1)*DATORA_PER_PAGE)+1}–${Math.min(datoraPage*DATORA_PER_PAGE, total)} de ${total}`;
+
+  const btns = document.getElementById('pageBtns');
+  btns.innerHTML = '';
+
+  const prev = document.createElement('button');
+  prev.className = 'page-btn';
+  prev.textContent = '← Ant';
+  prev.disabled = datoraPage <= 1;
+  prev.onclick = () => { datoraPage--; renderDatoraPage(); };
+  btns.appendChild(prev);
+
+  // Page number buttons (show up to 5)
+  const range = pageRange(datoraPage, pages, 5);
+  range.forEach(p => {
+    const b = document.createElement('button');
+    b.className = 'page-btn' + (p === datoraPage ? ' active' : '');
+    b.textContent = p;
+    b.onclick = () => { datoraPage = p; renderDatoraPage(); };
+    btns.appendChild(b);
+  });
+
+  const next = document.createElement('button');
+  next.className = 'page-btn';
+  next.textContent = 'Próx →';
+  next.disabled = datoraPage >= pages;
+  next.onclick = () => { datoraPage++; renderDatoraPage(); };
+  btns.appendChild(next);
+}
+
+function pageRange(current, total, size) {
+  let start = Math.max(1, current - Math.floor(size / 2));
+  let end   = Math.min(total, start + size - 1);
+  start = Math.max(1, end - size + 1);
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
+function datoraSearchFilter() {
+  const q = document.getElementById('datoraSearch').value.trim().toLowerCase();
+  datoraFiltered = q
+    ? datoraRows.filter(row =>
+        Object.values(row).some(v => String(v ?? '').toLowerCase().includes(q))
+      )
+    : [...datoraRows];
+  datoraPage = 1;
+  renderDatoraPage();
+}
+
+function clearDatora() {
+  datoraRawData  = null;
+  datoraRows     = [];
+  datoraFiltered = [];
+  datoraFields   = [];
+  datoraPage     = 1;
+
+  datoraDrop.classList.remove('has-file');
+  document.getElementById('dropTitle').textContent    = 'Selecione ou arraste o arquivo JSON';
+  document.getElementById('dropSubtitle').innerHTML   = 'Apenas arquivos <strong>.json</strong> são aceitos<br>Clique para abrir o seletor de arquivos';
+  document.getElementById('dropFileName').style.display = 'none';
+  document.getElementById('dropFileName').textContent    = '';
+  document.getElementById('dropIcon').querySelector('svg').innerHTML =
+    '<path d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>';
+
+  document.getElementById('jsonPreviewWrap').classList.remove('visible');
+  document.getElementById('jsonTree').innerHTML   = '';
+  document.getElementById('jsonStats').innerHTML  = '';
+  document.getElementById('datoraError').classList.remove('visible');
+  document.getElementById('datoraLoadBtn').disabled = true;
+  document.getElementById('datoraResultsWrap').style.display = 'none';
+  document.getElementById('datoraSearch').value  = '';
+  datoraFileInput.value = '';
+}
+
+function exportDatoraCSV() {
+  if (!datoraRows.length) return;
+  const keys = datoraFields;
+  const rows = [keys, ...datoraFiltered.map(r => keys.map(k => JSON.stringify(r[k] ?? '')))];
+  const csv  = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'datora_numeros.csv';
+  a.click();
+}
+
+function truncate(s, max) {
+  return s.length > max ? s.slice(0, max) + '…' : s;
 }
 </script>
 </body>
