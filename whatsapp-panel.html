@@ -1135,7 +1135,11 @@ function consultarNumero() {
   const found = userRows.filter(row =>
     Object.values(row).some(v => {
       const norm = String(v??'').replace(/\D/g,'');
-      return norm===raw || norm.endsWith(raw) || raw.endsWith(norm);
+      if (!norm) return false;
+      /* Correspondência exata, ou com/sem DDI 55 */
+      const rawSem55  = raw.startsWith('55')  ? raw.slice(2)  : raw;
+      const normSem55 = norm.startsWith('55') ? norm.slice(2) : norm;
+      return norm === raw || normSem55 === rawSem55;
     })
   );
 
