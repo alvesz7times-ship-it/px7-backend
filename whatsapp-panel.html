@@ -336,6 +336,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
       <span>SMS Numbers</span>
     </button>
+    <button class="tab-btn" onclick="switchTab('gmail', this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      <span>Gmail Temp</span>
+    </button>
   </nav>
 
   <!-- TAB 1 — Verificar Números -->
@@ -586,6 +590,92 @@
     </div>
   </div><!-- /panel-sms -->
 
+  <!-- TAB 4 — Gmail Temporário -->
+  <div class="tab-panel" id="panel-gmail">
+    <div class="input-section">
+      <div class="section-label">
+        <svg style="width:12px;height:12px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        Gmail Temporário
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px">
+        <div style="flex:1;min-width:200px">
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Endereço gerado</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="gmailTempAddr" readonly
+              style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--green);font-family:var(--mono);font-size:13px;padding:9px 14px;outline:none;letter-spacing:0.04em"
+              placeholder="Clique em Gerar…">
+            <button class="btn btn-secondary" style="padding:9px 14px;font-size:12px;white-space:nowrap" onclick="gmailCopyAddr()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="gmailGenBtn" onclick="gmailGerar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Gerar Email
+        </button>
+        <button class="btn btn-secondary" id="gmailRefreshBtn" onclick="gmailBuscarEmails()" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Atualizar Inbox
+        </button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <label style="font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" id="gmailAutoRefresh" onchange="gmailToggleAuto(this)" style="accent-color:var(--green)">
+          Auto-atualizar inbox a cada 15s
+        </label>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted)" id="gmailLastUpdated"></span>
+      </div>
+
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.6;margin-top:4px">
+        ⚠ Email temporário via <strong style="color:var(--text)">Guerrilla Mail</strong>. Expira após 1 hora de inatividade. Não use para dados sensíveis.
+      </div>
+
+      <div class="error-banner" id="gmailBanner"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="gmailStatsBar">
+      <div class="stat-pill"><div class="stat-dot dot-gray"></div><div class="stat-info"><div class="stat-label">Emails recebidos</div><div class="stat-value gray" id="gmailTotalVal">0</div></div></div>
+      <div class="stat-pill active-green"><div class="stat-dot dot-green"></div><div class="stat-info"><div class="stat-label">Não lidos</div><div class="stat-value green" id="gmailUnreadVal">0</div></div></div>
+      <div class="stat-pill"><div class="stat-dot dot-yellow"></div><div class="stat-info"><div class="stat-label">Status</div><div class="stat-value yellow" style="font-size:13px;margin-top:4px" id="gmailStatusVal">—</div></div></div>
+    </div>
+
+    <!-- Inbox list -->
+    <div class="results-section" id="gmailResultsSection">
+      <div class="results-header">
+        <span class="results-title">Inbox</span>
+        <button class="btn btn-danger" style="padding:5px 12px;font-size:11px" onclick="gmailLimpar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          Limpar / Novo Email
+        </button>
+      </div>
+      <!-- col header -->
+      <div style="display:grid;grid-template-columns:28px 1fr 160px 90px;gap:10px;padding:8px 24px;border-bottom:1px solid var(--border);background:rgba(10,14,13,0.6)">
+        <span class="col-label">#</span>
+        <span class="col-label">Assunto / Remetente</span>
+        <span class="col-label">Data</span>
+        <span class="col-label">Ação</span>
+      </div>
+      <div id="gmailList" class="results-list" style="max-height:520px">
+        <div class="empty-state"><p>Gere um email e clique em "Atualizar Inbox".</p></div>
+      </div>
+    </div>
+
+    <!-- Email viewer modal -->
+    <div id="gmailModal" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:680px;width:100%;max-height:80vh;display:flex;flex-direction:column;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border);background:var(--surface2)">
+          <span style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Visualizar Email</span>
+          <button onclick="gmailFecharModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1">✕</button>
+        </div>
+        <div style="padding:20px 24px;overflow-y:auto;flex:1" id="gmailModalBody"></div>
+      </div>
+    </div>
+  </div><!-- /panel-gmail -->
+
   <div class="dev-footer">
     <span>Desenvolvido por</span>
     <span class="dev-name">s/6</span>
@@ -618,6 +708,8 @@ function switchTab(id, btn) {
   if (id === 'sms' && smsAllData.length === 0) {
     smsFetch();
   }
+  /* Para Gmail, para o auto-refresh se sair da aba */
+  if (id !== 'gmail') gmailPararAuto();
 }
 
 /* ═══════════════════════════════════════════════
@@ -2841,6 +2933,203 @@ function smsExibirCodigo(num, code, btn, origBtnHtml) {
 
   smsShowBanner('🎉 Código OTP recebido: ' + code);
 }
+
+/* ═══════════════════════════════════════════════
+   GMAIL TEMPORÁRIO — Guerrilla Mail API
+═══════════════════════════════════════════════ */
+let gmailSessaoToken = null;
+let gmailEmail       = null;
+let gmailAutoTimer   = null;
+let gmailEmails      = [];
+
+const GUERRILLA_API  = 'https://api.guerrillamail.com/ajax.php';
+
+function gmailShowBanner(msg, isError = true) {
+  const el = document.getElementById('gmailBanner');
+  el.textContent = (isError ? '⚠ ' : '✅ ') + msg;
+  el.style.color = isError ? 'var(--red)' : 'var(--green)';
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 6000);
+}
+
+async function gmailGerar() {
+  const btn = document.getElementById('gmailGenBtn');
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Gerando…';
+
+  try {
+    const r = await fetch(`${GUERRILLA_API}?f=get_email_address&lang=pt&site=guerrillamail.com`);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+
+    gmailSessaoToken = data.sid_token;
+    gmailEmail       = data.email_addr;
+    gmailEmails      = [];
+
+    document.getElementById('gmailTempAddr').value = gmailEmail;
+    document.getElementById('gmailRefreshBtn').disabled = false;
+    document.getElementById('gmailStatusVal').textContent = 'Ativo';
+    document.getElementById('gmailTotalVal').textContent  = '0';
+    document.getElementById('gmailUnreadVal').textContent = '0';
+    document.getElementById('gmailList').innerHTML = '<div class="empty-state"><p>Inbox vazia. Aguardando emails…</p></div>';
+    gmailShowBanner('Email gerado: ' + gmailEmail, false);
+
+    await gmailBuscarEmails();
+  } catch(e) {
+    gmailShowBanner('Erro ao gerar email: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = orig;
+  }
+}
+
+async function gmailBuscarEmails() {
+  if (!gmailSessaoToken) { gmailShowBanner('Gere um email primeiro.'); return; }
+  const btn = document.getElementById('gmailRefreshBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Buscando…';
+
+  try {
+    // Manter sessão viva
+    await fetch(`${GUERRILLA_API}?f=get_email_address&site=guerrillamail.com&sid_token=${gmailSessaoToken}`).catch(()=>{});
+
+    const r = await fetch(`${GUERRILLA_API}?f=get_email_list&offset=0&site=guerrillamail.com&sid_token=${gmailSessaoToken}`);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+
+    const lista = data.list || [];
+    gmailEmails = lista;
+
+    const unread = lista.filter(m => m.mail_read === '0').length;
+    document.getElementById('gmailTotalVal').textContent  = lista.length;
+    document.getElementById('gmailUnreadVal').textContent = unread;
+    document.getElementById('gmailLastUpdated').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-BR');
+
+    const listEl = document.getElementById('gmailList');
+    if (!lista.length) {
+      listEl.innerHTML = '<div class="empty-state"><p>Inbox vazia. Aguardando emails…</p></div>';
+    } else {
+      listEl.innerHTML = lista.map((m, i) => `
+        <div class="result-item" style="grid-template-columns:28px 1fr 160px 90px;${m.mail_read==='0'?'background:rgba(37,211,102,0.04)':''}">
+          <span class="result-idx">${i+1}</span>
+          <span>
+            <div class="result-number" title="${m.mail_subject||'(sem assunto)'}" style="font-size:12px;${m.mail_read==='0'?'color:var(--green);font-weight:700':''}">
+              ${m.mail_subject || '<em style="color:var(--muted)">(sem assunto)</em>'}
+            </div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px">${m.mail_from||'desconhecido'}</div>
+          </span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap">${gmailFormatData(m.mail_date)}</span>
+          <span>
+            <button onclick="gmailVerEmail('${m.mail_id}')"
+              style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:var(--mono);font-size:10px;cursor:pointer;transition:all .2s"
+              onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--muted)'"
+              onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">
+              Ver
+            </button>
+          </span>
+        </div>`).join('');
+    }
+  } catch(e) {
+    gmailShowBanner('Erro ao buscar emails: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Atualizar Inbox`;
+  }
+}
+
+async function gmailVerEmail(mailId) {
+  if (!gmailSessaoToken) return;
+  try {
+    const r = await fetch(`${GUERRILLA_API}?f=fetch_email&email_id=${mailId}&site=guerrillamail.com&sid_token=${gmailSessaoToken}`);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+
+    const modal    = document.getElementById('gmailModal');
+    const bodyEl   = document.getElementById('gmailModalBody');
+    modal.style.display = 'flex';
+
+    const from    = data.mail_from    || '—';
+    const subject = data.mail_subject || '(sem assunto)';
+    const date    = data.mail_date    || '—';
+    const body    = data.mail_body    || data.mail_excerpt || '(vazio)';
+
+    bodyEl.innerHTML = `
+      <div style="margin-bottom:16px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">DE</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--text)">${from}</div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">ASSUNTO</div>
+        <div style="font-size:16px;font-weight:700;color:var(--green)">${subject}</div>
+      </div>
+      <div style="margin-bottom:20px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">DATA</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--muted)">${date}</div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:16px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:10px">MENSAGEM</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.8;white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;max-height:320px;overflow-y:auto">${body.replace(/<[^>]+>/g,' ').replace(/\s{2,}/g,' ').trim()}</div>
+      </div>`;
+
+    // Marcar como lido localmente
+    gmailBuscarEmails();
+  } catch(e) {
+    gmailShowBanner('Erro ao abrir email: ' + e.message);
+  }
+}
+
+function gmailFecharModal() {
+  document.getElementById('gmailModal').style.display = 'none';
+}
+
+function gmailCopyAddr() {
+  const addr = document.getElementById('gmailTempAddr').value;
+  if (!addr) { gmailShowBanner('Gere um email primeiro.'); return; }
+  navigator.clipboard.writeText(addr)
+    .then(() => gmailShowBanner('Email copiado: ' + addr, false))
+    .catch(() => gmailShowBanner('Não foi possível copiar.'));
+}
+
+function gmailFormatData(dateStr) {
+  if (!dateStr) return '—';
+  try { return new Date(dateStr).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }); }
+  catch { return dateStr; }
+}
+
+function gmailToggleAuto(cb) {
+  if (cb.checked) {
+    gmailAutoTimer = setInterval(gmailBuscarEmails, 15000);
+  } else {
+    gmailPararAuto();
+    document.getElementById('gmailAutoRefresh').checked = false;
+  }
+}
+
+function gmailPararAuto() {
+  if (gmailAutoTimer) { clearInterval(gmailAutoTimer); gmailAutoTimer = null; }
+  const cb = document.getElementById('gmailAutoRefresh');
+  if (cb) cb.checked = false;
+}
+
+function gmailLimpar() {
+  gmailPararAuto();
+  gmailSessaoToken = null;
+  gmailEmail       = null;
+  gmailEmails      = [];
+  document.getElementById('gmailTempAddr').value         = '';
+  document.getElementById('gmailRefreshBtn').disabled    = true;
+  document.getElementById('gmailTotalVal').textContent   = '0';
+  document.getElementById('gmailUnreadVal').textContent  = '0';
+  document.getElementById('gmailStatusVal').textContent  = '—';
+  document.getElementById('gmailLastUpdated').textContent= '';
+  document.getElementById('gmailList').innerHTML = '<div class="empty-state"><p>Gere um email e clique em "Atualizar Inbox".</p></div>';
+}
+
+// Fechar modal clicando fora
+document.getElementById('gmailModal').addEventListener('click', function(e) {
+  if (e.target === this) gmailFecharModal();
+});
 </script>
 </body>
 </html>
