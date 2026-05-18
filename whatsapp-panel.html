@@ -199,6 +199,205 @@
   .results-list::-webkit-scrollbar-track, .json-tree::-webkit-scrollbar-track { background: transparent; }
   .results-list::-webkit-scrollbar-thumb, .json-tree::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+  /* ══════════════════════════════════════════════
+     GMAIL TAB — classes para responsividade limpa
+  ══════════════════════════════════════════════ */
+  .gmail-controls {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .gmail-addr-block {
+    flex: 1;
+    min-width: 220px;
+  }
+  .gmail-addr-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .gmail-addr-input {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 9px 14px;
+    outline: none;
+    letter-spacing: 0.04em;
+    transition: border-color 0.2s;
+  }
+  .gmail-addr-input:focus { border-color: var(--green-dim); }
+  .gmail-btn-row {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .gmail-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .gmail-warning {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 4px;
+  }
+  /* Inbox col header */
+  .gmail-col-header {
+    display: grid;
+    grid-template-columns: 28px 1fr 150px 80px;
+    gap: 10px;
+    padding: 8px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,14,13,0.6);
+  }
+  /* Inbox rows rendered via JS */
+  .gmail-row {
+    display: grid;
+    grid-template-columns: 28px 1fr 150px 80px;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    animation: slideIn 0.25s ease both;
+  }
+  .gmail-row:last-child { border-bottom: none; }
+  .gmail-row:hover { background: var(--surface2); }
+  .gmail-row.unread { background: rgba(37,211,102,0.04); }
+  .gmail-subject {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .gmail-subject.unread { color: var(--green); font-weight: 700; }
+  .gmail-from {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .gmail-date {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .gmail-view-btn {
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .gmail-view-btn:hover { color: var(--text); border-color: var(--muted); }
+  /* Modal */
+  .gmail-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .gmail-modal-overlay.open { display: flex; }
+  .gmail-modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    max-width: 680px;
+    width: 100%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .gmail-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    flex-shrink: 0;
+  }
+  .gmail-modal-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.2s;
+  }
+  .gmail-modal-close:hover { color: var(--text); }
+  .gmail-modal-body {
+    padding: 20px 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .gmail-field-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .gmail-field-val {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    margin-bottom: 16px;
+    word-break: break-all;
+  }
+  .gmail-field-subject {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 16px;
+  }
+  .gmail-body-content {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
   /* ── Tablet (max 860px) ── */
   @media (max-width: 860px) {
     .container { padding: 32px 18px 60px; }
@@ -206,6 +405,8 @@
     .result-item        { grid-template-columns: 24px 1fr 120px 100px 88px; }
     .datora-col-header  { grid-template-columns: 24px 1fr 1fr 1fr 110px; }
     .datora-row         { grid-template-columns: 24px 1fr 1fr 1fr 110px; }
+    .gmail-col-header   { grid-template-columns: 28px 1fr 130px 72px; padding: 8px 18px; }
+    .gmail-row          { grid-template-columns: 28px 1fr 130px 72px; padding: 11px 18px; }
   }
 
   /* ── Mobile (max 640px) ── */
@@ -223,8 +424,8 @@
     .header-status  { margin-left: auto; }
 
     /* Tabs — só ícone no mobile */
-    .tab-nav { padding: 5px; gap: 3px; border-radius: 10px; }
-    .tab-btn { padding: 9px 10px; border-radius: 7px; font-size: 12px; gap: 5px; }
+    .tab-nav { padding: 5px; gap: 3px; border-radius: 10px; overflow-x: auto; flex-wrap: nowrap; }
+    .tab-btn { padding: 9px 10px; border-radius: 7px; font-size: 12px; gap: 5px; flex-shrink: 0; }
     .tab-btn span { display: none; }
 
     /* Input */
@@ -241,7 +442,7 @@
     .stat-pill  { min-width: calc(50% - 4px); flex: 1 1 calc(50% - 4px); padding: 12px 14px; }
     .stat-value { font-size: 18px; }
 
-    /* Tabela de resultados — esconde colunas menos importantes */
+    /* Tabela checker */
     .results-col-header { grid-template-columns: 22px 1fr 100px 78px; gap: 6px; padding: 6px 14px; }
     .results-col-header .col-carrier-orig { display: none; }
     .result-item { grid-template-columns: 22px 1fr 100px 78px; gap: 6px; padding: 10px 14px; }
@@ -269,10 +470,11 @@
 
     /* SMS tab */
     .results-section { border-radius: 12px; }
-    #smsList .result-item, 
-    #smsList [style*="grid-template-columns"] { 
-      grid-template-columns: 22px 1fr 90px 80px !important; 
+    #smsList .result-item,
+    #smsList [style*="grid-template-columns"] {
+      grid-template-columns: 22px 1fr 80px 68px !important;
       font-size: 11px !important;
+      padding: 10px 14px !important;
     }
 
     /* Drop zone */
@@ -291,6 +493,25 @@
 
     /* Dev footer */
     .dev-footer { flex-wrap: wrap; gap: 6px; font-size: 10px; }
+
+    /* Gmail mobile */
+    .gmail-controls   { flex-direction: column; align-items: stretch; }
+    .gmail-addr-block { min-width: 0; width: 100%; }
+    .gmail-addr-input { font-size: 11px; padding: 9px 10px; }
+    .gmail-btn-row    { width: 100%; }
+    .gmail-btn-row .btn { flex: 1; justify-content: center; }
+    .gmail-meta-row   { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .gmail-col-header { grid-template-columns: 22px 1fr 80px; gap: 6px; padding: 6px 14px; }
+    .gmail-col-header .gmail-col-date { display: none; }
+    .gmail-row        { grid-template-columns: 22px 1fr 80px; gap: 6px; padding: 10px 14px; }
+    .gmail-row .gmail-date { display: none; }
+    .gmail-subject    { font-size: 11px; }
+    .gmail-from       { font-size: 9px; }
+    .gmail-view-btn   { font-size: 9px; padding: 4px 8px; }
+    .gmail-modal-box  { border-radius: 12px; max-height: 90vh; }
+    .gmail-modal-head { padding: 14px 16px; }
+    .gmail-modal-body { padding: 16px; }
+    .gmail-body-content { font-size: 11px; max-height: 240px; }
   }
 
   /* ── Mobile pequeno (max 400px) ── */
@@ -303,6 +524,9 @@
     .results-col-header .col-label:nth-child(3) { display: none; }
     .carrier-chip { display: none; }
     .result-badge { font-size: 10px; padding: 3px 8px; }
+    .gmail-col-header,
+    .gmail-row { grid-template-columns: 20px 1fr 72px; gap: 5px; padding: 9px 12px; }
+    .gmail-modal-overlay { padding: 10px; }
   }
 </style>
 </head>
@@ -598,47 +822,45 @@
         Gmail Temporário
       </div>
 
-      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px">
-        <div style="flex:1;min-width:200px">
-          <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Endereço gerado</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input id="gmailTempAddr" readonly
-              style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--green);font-family:var(--mono);font-size:13px;padding:9px 14px;outline:none;letter-spacing:0.04em"
-              placeholder="Clique em Gerar…">
-            <button class="btn btn-secondary" style="padding:9px 14px;font-size:12px;white-space:nowrap" onclick="gmailCopyAddr()">
+      <div class="gmail-controls">
+        <div class="gmail-addr-block">
+          <div class="section-label" style="margin-bottom:8px">Endereço gerado</div>
+          <div class="gmail-addr-row">
+            <input id="gmailTempAddr" class="gmail-addr-input" readonly placeholder="Clique em Gerar…">
+            <button class="btn btn-secondary" style="padding:9px 14px;font-size:12px;white-space:nowrap;flex-shrink:0" onclick="gmailCopyAddr()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
               Copiar
             </button>
           </div>
         </div>
-        <button class="btn btn-primary" id="gmailGenBtn" onclick="gmailGerar()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          Gerar Email
-        </button>
-        <button class="btn btn-secondary" id="gmailRefreshBtn" onclick="gmailBuscarEmails()" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          Atualizar Inbox
-        </button>
+        <div class="gmail-btn-row">
+          <button class="btn btn-primary" id="gmailGenBtn" onclick="gmailGerar()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Gerar
+          </button>
+          <button class="btn btn-secondary" id="gmailRefreshBtn" onclick="gmailBuscarEmails()" disabled>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Atualizar
+          </button>
+        </div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <div class="gmail-meta-row">
         <label style="font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer">
           <input type="checkbox" id="gmailAutoRefresh" onchange="gmailToggleAuto(this)" style="accent-color:var(--green)">
-          Auto-atualizar inbox a cada 15s
+          Auto-atualizar a cada 15s
         </label>
-        <span style="font-family:var(--mono);font-size:10px;color:var(--muted)" id="gmailLastUpdated"></span>
+        <span class="gmail-date" id="gmailLastUpdated"></span>
       </div>
 
-      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.6;margin-top:4px">
-        ⚠ Email temporário via <strong style="color:var(--text)">Guerrilla Mail</strong>. Expira após 1 hora de inatividade. Não use para dados sensíveis.
-      </div>
+      <p class="gmail-warning">⚠ Email temporário via <strong style="color:var(--text)">Guerrilla Mail</strong>. Expira após 1h de inatividade. Não use para dados sensíveis.</p>
 
       <div class="error-banner" id="gmailBanner"></div>
     </div>
 
     <!-- Stats -->
     <div class="stats-bar" id="gmailStatsBar">
-      <div class="stat-pill"><div class="stat-dot dot-gray"></div><div class="stat-info"><div class="stat-label">Emails recebidos</div><div class="stat-value gray" id="gmailTotalVal">0</div></div></div>
+      <div class="stat-pill"><div class="stat-dot dot-gray"></div><div class="stat-info"><div class="stat-label">Recebidos</div><div class="stat-value gray" id="gmailTotalVal">0</div></div></div>
       <div class="stat-pill active-green"><div class="stat-dot dot-green"></div><div class="stat-info"><div class="stat-label">Não lidos</div><div class="stat-value green" id="gmailUnreadVal">0</div></div></div>
       <div class="stat-pill"><div class="stat-dot dot-yellow"></div><div class="stat-info"><div class="stat-label">Status</div><div class="stat-value yellow" style="font-size:13px;margin-top:4px" id="gmailStatusVal">—</div></div></div>
     </div>
@@ -649,29 +871,28 @@
         <span class="results-title">Inbox</span>
         <button class="btn btn-danger" style="padding:5px 12px;font-size:11px" onclick="gmailLimpar()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          Limpar / Novo Email
+          Novo Email
         </button>
       </div>
-      <!-- col header -->
-      <div style="display:grid;grid-template-columns:28px 1fr 160px 90px;gap:10px;padding:8px 24px;border-bottom:1px solid var(--border);background:rgba(10,14,13,0.6)">
+      <div class="gmail-col-header">
         <span class="col-label">#</span>
         <span class="col-label">Assunto / Remetente</span>
-        <span class="col-label">Data</span>
+        <span class="col-label gmail-col-date">Data</span>
         <span class="col-label">Ação</span>
       </div>
       <div id="gmailList" class="results-list" style="max-height:520px">
-        <div class="empty-state"><p>Gere um email e clique em "Atualizar Inbox".</p></div>
+        <div class="empty-state"><p>Gere um email e clique em "Atualizar".</p></div>
       </div>
     </div>
 
     <!-- Email viewer modal -->
-    <div id="gmailModal" style="display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:680px;width:100%;max-height:80vh;display:flex;flex-direction:column;overflow:hidden">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border);background:var(--surface2)">
-          <span style="font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Visualizar Email</span>
-          <button onclick="gmailFecharModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1">✕</button>
+    <div id="gmailModal" class="gmail-modal-overlay">
+      <div class="gmail-modal-box">
+        <div class="gmail-modal-head">
+          <span class="results-title">Visualizar Email</span>
+          <button class="gmail-modal-close" onclick="gmailFecharModal()">✕</button>
         </div>
-        <div style="padding:20px 24px;overflow-y:auto;flex:1" id="gmailModalBody"></div>
+        <div class="gmail-modal-body" id="gmailModalBody"></div>
       </div>
     </div>
   </div><!-- /panel-gmail -->
@@ -3010,25 +3231,22 @@ async function gmailBuscarEmails() {
     if (!lista.length) {
       listEl.innerHTML = '<div class="empty-state"><p>Inbox vazia. Aguardando emails…</p></div>';
     } else {
-      listEl.innerHTML = lista.map((m, i) => `
-        <div class="result-item" style="grid-template-columns:28px 1fr 160px 90px;${m.mail_read==='0'?'background:rgba(37,211,102,0.04)':''}">
+      listEl.innerHTML = lista.map((m, i) => {
+        const isUnread = m.mail_read === '0';
+        const subj = m.mail_subject || '(sem assunto)';
+        return `
+        <div class="gmail-row${isUnread?' unread':''}">
           <span class="result-idx">${i+1}</span>
-          <span>
-            <div class="result-number" title="${m.mail_subject||'(sem assunto)'}" style="font-size:12px;${m.mail_read==='0'?'color:var(--green);font-weight:700':''}">
-              ${m.mail_subject || '<em style="color:var(--muted)">(sem assunto)</em>'}
-            </div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px">${m.mail_from||'desconhecido'}</div>
+          <span style="min-width:0;overflow:hidden">
+            <div class="gmail-subject${isUnread?' unread':''}" title="${subj}">${subj}</div>
+            <div class="gmail-from">${m.mail_from||'desconhecido'}</div>
           </span>
-          <span style="font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap">${gmailFormatData(m.mail_date)}</span>
+          <span class="gmail-date">${gmailFormatData(m.mail_date)}</span>
           <span>
-            <button onclick="gmailVerEmail('${m.mail_id}')"
-              style="padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:var(--mono);font-size:10px;cursor:pointer;transition:all .2s"
-              onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--muted)'"
-              onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--border)'">
-              Ver
-            </button>
+            <button class="gmail-view-btn" onclick="gmailVerEmail('${m.mail_id}')">Ver</button>
           </span>
-        </div>`).join('');
+        </div>`;
+      }).join('');
     }
   } catch(e) {
     gmailShowBanner('Erro ao buscar emails: ' + e.message);
@@ -3047,7 +3265,7 @@ async function gmailVerEmail(mailId) {
 
     const modal    = document.getElementById('gmailModal');
     const bodyEl   = document.getElementById('gmailModalBody');
-    modal.style.display = 'flex';
+    modal.classList.add('open');
 
     const from    = data.mail_from    || '—';
     const subject = data.mail_subject || '(sem assunto)';
@@ -3055,22 +3273,14 @@ async function gmailVerEmail(mailId) {
     const body    = data.mail_body    || data.mail_excerpt || '(vazio)';
 
     bodyEl.innerHTML = `
-      <div style="margin-bottom:16px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">DE</div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--text)">${from}</div>
-      </div>
-      <div style="margin-bottom:16px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">ASSUNTO</div>
-        <div style="font-size:16px;font-weight:700;color:var(--green)">${subject}</div>
-      </div>
-      <div style="margin-bottom:20px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px">DATA</div>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--muted)">${date}</div>
-      </div>
-      <div style="border-top:1px solid var(--border);padding-top:16px">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:10px">MENSAGEM</div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.8;white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;max-height:320px;overflow-y:auto">${body.replace(/<[^>]+>/g,' ').replace(/\s{2,}/g,' ').trim()}</div>
-      </div>`;
+      <div class="gmail-field-label">De</div>
+      <div class="gmail-field-val">${from}</div>
+      <div class="gmail-field-label">Assunto</div>
+      <div class="gmail-field-subject">${subject}</div>
+      <div class="gmail-field-label">Data</div>
+      <div class="gmail-field-val">${date}</div>
+      <div class="gmail-field-label" style="margin-top:4px;border-top:1px solid var(--border);padding-top:14px">Mensagem</div>
+      <div class="gmail-body-content">${body.replace(/<[^>]+>/g,' ').replace(/\s{2,}/g,' ').trim()}</div>`;
 
     // Marcar como lido localmente
     gmailBuscarEmails();
@@ -3080,7 +3290,7 @@ async function gmailVerEmail(mailId) {
 }
 
 function gmailFecharModal() {
-  document.getElementById('gmailModal').style.display = 'none';
+  document.getElementById('gmailModal').classList.remove('open');
 }
 
 function gmailCopyAddr() {
