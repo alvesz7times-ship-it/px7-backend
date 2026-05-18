@@ -436,6 +436,8 @@
     /* Botões */
     .controls { flex-direction: column; gap: 8px; }
     .btn { width: 100%; justify-content: center; font-size: 13px; padding: 11px 16px; }
+    /* Exceção: botões dentro do gmail-btn-row NÃO devem ser 100% */
+    .gmail-btn-row .btn { width: auto; }
 
     /* Stats */
     .stats-bar { flex-wrap: wrap; gap: 8px; }
@@ -495,23 +497,36 @@
     .dev-footer { flex-wrap: wrap; gap: 6px; font-size: 10px; }
 
     /* Gmail mobile */
-    .gmail-controls   { flex-direction: column; align-items: stretch; }
+    .gmail-controls   { flex-direction: column; align-items: stretch; gap: 12px; }
     .gmail-addr-block { min-width: 0; width: 100%; }
-    .gmail-addr-input { font-size: 11px; padding: 9px 10px; }
-    .gmail-btn-row    { width: 100%; }
-    .gmail-btn-row .btn { flex: 1; justify-content: center; }
-    .gmail-meta-row   { flex-direction: column; align-items: flex-start; gap: 6px; }
-    .gmail-col-header { grid-template-columns: 22px 1fr 80px; gap: 6px; padding: 6px 14px; }
+    .gmail-addr-input { font-size: 12px; padding: 10px 12px; }
+    /* Garante que input + botão Copiar fiquem na mesma linha */
+    .gmail-addr-row { flex-wrap: nowrap; }
+    .gmail-addr-row .btn { width: auto; flex-shrink: 0; padding: 10px 14px; font-size: 12px; }
+    /* Botões Gerar + Atualizar Inbox lado a lado, linha inteira */
+    .gmail-btn-row    { width: 100%; display: flex; gap: 8px; }
+    .gmail-btn-row .btn { flex: 1; justify-content: center; font-size: 13px; padding: 11px 10px; }
+    .gmail-meta-row   { flex-direction: row; align-items: center; gap: 10px; flex-wrap: wrap; }
+    /* Inbox col: oculta data, mantém #, assunto, ação */
+    .gmail-col-header { grid-template-columns: 22px 1fr 72px; gap: 6px; padding: 8px 14px; }
     .gmail-col-header .gmail-col-date { display: none; }
-    .gmail-row        { grid-template-columns: 22px 1fr 80px; gap: 6px; padding: 10px 14px; }
+    .gmail-row        { grid-template-columns: 22px 1fr 72px; gap: 6px; padding: 10px 14px; }
     .gmail-row .gmail-date { display: none; }
-    .gmail-subject    { font-size: 11px; }
-    .gmail-from       { font-size: 9px; }
-    .gmail-view-btn   { font-size: 9px; padding: 4px 8px; }
-    .gmail-modal-box  { border-radius: 12px; max-height: 90vh; }
+    .gmail-subject    { font-size: 12px; }
+    .gmail-from       { font-size: 10px; }
+    .gmail-view-btn   { font-size: 10px; padding: 5px 10px; }
+    /* Stats pills: 2 colunas iguais para Recebidos/Não lidos, Status ocupa linha inteira */
+    #gmailStatsBar    { flex-wrap: wrap; gap: 8px; }
+    #gmailStatsBar .stat-pill:nth-child(1),
+    #gmailStatsBar .stat-pill:nth-child(2) { flex: 1 1 calc(50% - 4px); min-width: calc(50% - 4px); }
+    #gmailStatsBar .stat-pill:nth-child(3) { flex: 1 1 100%; width: 100%; }
+    /* Inbox header: título + botão "Novo Email" compacto */
+    #gmailResultsSection .results-header { flex-wrap: nowrap; gap: 8px; padding: 14px 16px; align-items: center; }
+    #gmailResultsSection .results-header .btn { width: auto !important; padding: 7px 14px !important; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
+    .gmail-modal-box  { border-radius: 12px; max-height: 92vh; }
     .gmail-modal-head { padding: 14px 16px; }
     .gmail-modal-body { padding: 16px; }
-    .gmail-body-content { font-size: 11px; max-height: 240px; }
+    .gmail-body-content { font-size: 11px; max-height: 260px; }
   }
 
   /* ── Mobile pequeno (max 400px) ── */
@@ -869,7 +884,7 @@
     <div class="results-section" id="gmailResultsSection">
       <div class="results-header">
         <span class="results-title">Inbox</span>
-        <button class="btn btn-danger" style="padding:5px 12px;font-size:11px" onclick="gmailLimpar()">
+        <button class="btn btn-danger" style="padding:5px 12px;font-size:11px;width:auto;flex-shrink:0" onclick="gmailLimpar()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
           Novo Email
         </button>
